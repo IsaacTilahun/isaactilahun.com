@@ -1,0 +1,20 @@
+---
+layout: layouts/base.njk
+title: Projects - Isaac Tilahun
+description: Selected projects by Isaac Tilahun.
+permalink: /projects/
+bodyClass: projects-view
+---
+
+{% from "components/project-card.njk" import projectCard %}
+
+{# The loop is the only page logic: the component handles each card. #}
+<header class="page-header">
+  <h1 class="sr-only">Projects</h1>
+  <img class="section-drawing drawing" src="{{ siteContent.drawings.projects }}" alt="Projects">
+</header>
+<div class="project-grid" aria-label="Project list">
+  {% for project in siteContent.projects %}
+    {{ projectCard(project, siteContent.drawings) }}
+  {% endfor %}
+</div>

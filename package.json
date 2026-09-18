@@ -1,0 +1,15 @@
+{
+  "name": "isaactilahun.com",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static portfolio site for Isaac Tilahun.",
+  "scripts": {
+    "dev": "eleventy --serve",
+    "build": "node scripts/clean-site.js && eleventy",
+    "optimize:svg": "svgo --folder assets/drawings --multipass"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.1.2",
+    "svgo": "^4.1.0"
+  }
+}

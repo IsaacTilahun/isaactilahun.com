@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="{{ siteContent.site.language }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title if title else siteContent.site.title }}</title>
+    <meta name="description" content="{{ description if description else siteContent.site.description }}">
+    <meta name="color-scheme" content="light dark">
+    {# Runs before CSS to prevent a flash of the wrong saved theme. #}
+    <script>
+      (function () {
+        var savedTheme = localStorage.getItem("theme");
+        if (savedTheme) document.documentElement.dataset.theme = savedTheme;
+      })();
+    </script>
+    <link rel="stylesheet" href="{{ '/assets/css/styles.css' | url }}">
+    {# Fetch the other small static pages early so header navigation feels instant. #}
+    {% for item in siteContent.navigation %}
+      {% if page.url != item.url %}<link rel="prefetch" href="{{ item.url | url }}" as="document">{% endif %}
+    {% endfor %}
+    <script src="{{ '/assets/js/main.js' | url }}" defer></script>
+  </head>
+  <body{% if bodyClass %} class="{{ bodyClass }}"{% endif %}>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <nav class="site-nav" aria-label="Primary navigation">
+        <ul>
+          {% for item in siteContent.navigation %}
+            <li>
+              <a href="{{ item.url | url }}" {% if page.url == item.url %}aria-current="page"{% endif %}>
+                <img class="nav-drawing drawing" src="{{ item.drawing }}" alt="" aria-hidden="true" decoding="async">
+                {# Only the current route receives the hand-drawn underline. #}
+                {% if page.url == item.url %}<img class="nav-underline drawing" src="{{ siteContent.drawings.headerUnderline }}" alt="" aria-hidden="true" decoding="async">{% endif %}
+                <span class="sr-only">{{ item.label }}</span>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="Switch color theme">
+        <img class="theme-toggle__image drawing" src="{{ siteContent.drawings.darkMode }}" data-light-src="{{ siteContent.drawings.lightMode }}" data-dark-src="{{ siteContent.drawings.darkMode }}" alt="" aria-hidden="true">
+      </button>
+    </header>
+    <main id="main">{{ content | safe }}</main>
+    <footer class="site-footer">
+      <img class="footer-signature drawing" src="{{ siteContent.drawings.copyright }}" alt="2026 Isaac Tilahun" loading="lazy" decoding="async">
+      <img class="footer-drawing drawing" src="{{ siteContent.drawings.smiley }}" alt="A hand-drawn smiley face" loading="lazy" decoding="async">
+    </footer>
+  </body>
+</html>

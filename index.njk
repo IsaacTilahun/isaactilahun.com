@@ -1,0 +1,38 @@
+---
+layout: layouts/base.njk
+title: Isaac Tilahun
+description: Personal website for Isaac Tilahun.
+permalink: /
+---
+
+<article class="intro" aria-labelledby="home-title">
+  <h1 class="sr-only" id="home-title">{{ siteContent.author.name }}</h1>
+  <img class="identity-drawing drawing" src="{{ siteContent.drawings.identity }}" alt="Isaac Tilahun, third-year computer science and statistics student at the University of Toronto" decoding="async" fetchpriority="high">
+  <div class="journal-paper">
+    <img class="journal-drawing drawing" src="{{ siteContent.drawings.homeJournal }}" alt="A handwritten journal entry about Isaac's interests, goals, and current work" decoding="async">
+  </div>
+  <section class="reach-out" aria-labelledby="reach-out-title">
+    <h2 class="sr-only" id="reach-out-title">Reach out</h2>
+    <img class="reach-out__title drawing" src="{{ siteContent.drawings.reachOut }}" alt="Reach out!" loading="lazy" decoding="async">
+    <ul class="social-list" aria-label="Social links">
+      <li class="social-list__linkedin">
+        <a href="{{ siteContent.socials[1].href }}" rel="me noopener" target="_blank">
+          <img class="social-icon drawing" src="{{ siteContent.socials[1].icon }}" alt="" aria-hidden="true" loading="lazy" decoding="async">
+          <img class="social-drawing drawing" src="{{ siteContent.drawings.linkedin }}" alt="LinkedIn: isaactil" loading="lazy" decoding="async">
+        </a>
+      </li>
+      <li class="social-list__isaac">
+        <a href="{{ siteContent.socials[0].href }}" rel="me noopener" target="_blank">
+          <img class="social-icon drawing" src="{{ siteContent.socials[0].icon }}" alt="" aria-hidden="true" loading="lazy" decoding="async">
+          <img class="social-drawing drawing" src="{{ siteContent.drawings.github }}" alt="Isaac Tilahun" loading="lazy" decoding="async">
+        </a>
+      </li>
+      <li class="social-list__email">
+        <a href="{{ siteContent.socials[2].href }}" rel="me">
+          <img class="social-icon drawing" src="{{ siteContent.socials[2].icon }}" alt="" aria-hidden="true" loading="lazy" decoding="async">
+          <img class="social-drawing drawing" src="{{ siteContent.drawings.email }}" alt="Email Isaac Tilahun" loading="lazy" decoding="async">
+        </a>
+      </li>
+    </ul>
+  </section>
+</article>

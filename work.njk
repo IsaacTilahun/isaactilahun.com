@@ -1,0 +1,22 @@
+---
+layout: layouts/base.njk
+title: Work - Isaac Tilahun
+description: Experience and work history for Isaac Tilahun.
+permalink: /work/
+---
+
+<header class="page-header">
+  <h1 class="sr-only">Work</h1>
+  <img class="section-drawing drawing" src="{{ siteContent.drawings.work }}" alt="Work">
+  <p class="page-description">A short record of the places I have worked and what I did there.</p>
+</header>
+<div class="work-list" aria-label="Experience list">
+  {% for role in siteContent.work %}
+    <article class="work-item">
+      <h2>{{ role.title }}, {{ role.company }}</h2>
+      <p class="meta">{{ role.dates }}{% if role.location %} &middot; {{ role.location }}{% endif %}</p>
+      <p>{{ role.description }}</p>
+      <ul>{% for bullet in role.bullets %}<li>{{ bullet }}</li>{% endfor %}</ul>
+    </article>
+  {% endfor %}
+</div>

@@ -1,0 +1,43 @@
+---
+layout: layouts/base.njk
+pagination:
+  data: siteContent.projects
+  size: 1
+  alias: project
+  addAllPagesToCollections: false
+permalink: "/projects/{{ project.slug }}/"
+bodyClass: project-detail-view
+eleventyComputed:
+  title: "{{ project.title }} - Isaac Tilahun"
+  description: "{{ project.description }}"
+---
+
+{% from "components/project-card.njk" import projectAction %}
+
+{# Eleventy runs this template once per project because of pagination above. #}
+<article class="project-detail">
+  <a class="project-detail__back" href="{{ '/projects/' | url }}">Back to projects</a>
+  <img class="project-detail__cover" src="{{ project.cover.src }}" alt="{{ project.cover.alt }}">
+  <h1>{{ project.title }}</h1>
+  <p class="project-detail__summary">{{ project.description }}</p>
+
+  {% if project.details and project.details.length %}
+    <div class="project-detail__copy">
+      {% for paragraph in project.details %}<p>{{ paragraph }}</p>{% endfor %}
+    </div>
+  {% endif %}
+
+  {% if project.tech and project.tech.length %}
+    <ul class="project-tech-list" aria-label="Technology used for {{ project.title }}">
+      {% for technology in project.tech %}<li>{{ technology }}</li>{% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if project.actions and project.actions.length %}
+    <div class="project-actions" aria-label="Links for {{ project.title }}">
+      {% for action in project.actions %}
+        {% if action.type != "readMore" %}{{ projectAction(action, project, siteContent.drawings) }}{% endif %}
+      {% endfor %}
+    </div>
+  {% endif %}
+</article>
