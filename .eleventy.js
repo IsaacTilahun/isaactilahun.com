@@ -1,6 +1,6 @@
 module.exports = function (eleventyConfig) {
-  // Make content.js available in every Nunjucks template as `siteContent`.
-  eleventyConfig.addGlobalData("siteContent", require("./content.js"));
+  // Combine the data folder and expose it to templates as `siteContent`.
+  eleventyConfig.addGlobalData("siteContent", require("./data"));
 
   // README is documentation, not a website page. Assets are copied unchanged.
   eleventyConfig.ignores.add("README.md");

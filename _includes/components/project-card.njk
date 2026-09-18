@@ -1,6 +1,6 @@
 {#
   Reusable action renderer. `readMore` gets its URL from the project slug;
-  external actions use the href provided in content.js.
+  external actions use the href provided in data/projects.js.
 #}
 {% macro projectAction(action, project, drawings) %}
   {% set href = action.href %}
@@ -23,7 +23,7 @@
   </a>
 {% endmacro %}
 
-{# One project object in content.js becomes one complete card here. #}
+{# One project object in data/projects.js becomes one complete card here. #}
 {% macro projectCard(project, drawings) %}
   <article class="project-card">
     <img class="project-card__cover" src="{{ project.cover.src }}" alt="{{ project.cover.alt }}" loading="lazy" decoding="async">

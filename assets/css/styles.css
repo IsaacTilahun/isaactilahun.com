@@ -254,7 +254,7 @@ main { min-height: 65vh; padding: clamp(3.5rem, 9vw, 6.5rem) 0 5rem; }
 .work-item ul { margin: 0.9rem 0 0; }
 .work-item li + li { margin-top: 0.35rem; }
 
-/* Projects index: responsive cards generated from content.js. */
+/* Projects index: responsive cards generated from data/projects.js. */
 .projects-view main {
   width: min(1040px, calc(100% - 40px));
 }

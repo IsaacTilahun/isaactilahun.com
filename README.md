@@ -1,6 +1,6 @@
 # Isaac Tilahun Portfolio
 
-Minimal portfolio site built with Eleventy. Personal content is kept in [content.js](content.js), and hand-drawn artwork lives in [assets/drawings](assets/drawings).
+Minimal portfolio site built with Eleventy. Editable content is grouped in the [`data/`](data/) folder, and hand-drawn artwork lives in [`assets/drawings/`](assets/drawings/).
 
 ## Tech stack
 
@@ -17,7 +17,7 @@ Visitors never download Eleventy or Nunjucks. Those tools run only during develo
 ## How the site builds
 
 ```text
-content.js + .njk templates + assets
+data/ + .njk templates + assets
                  |
               Eleventy
                  |
@@ -51,7 +51,10 @@ The block between `---` markers at the top of a `.njk` file is called front matt
 
 ## File map
 
-- `content.js`: all editable personal data, work history, navigation, drawing paths, and projects.
+- `data/site.js`: identity, contact links, navigation, metadata, and drawing paths.
+- `data/work.js`: work history used by the Work and Resume pages.
+- `data/projects.js`: project entries plus the `createProject` validation helper.
+- `data/index.js`: combines the three data sections for Eleventy. You will rarely edit it.
 - `index.njk`, `work.njk`, `projects.njk`, `resume.njk`: the four main page templates.
 - `project.njk`: runs once per project and generates `/projects/{slug}/` detail pages.
 - `_includes/layouts/base.njk`: shared HTML shell containing the `<head>`, header, navigation, theme button, and footer.
@@ -64,13 +67,15 @@ The block between `---` markers at the top of a `.njk` file is called front matt
 
 ## Edit content
 
-- Update identity details, socials, work history, drawing paths, and projects in `content.js`.
+- Update identity, socials, navigation, and drawing paths in `data/site.js`.
+- Update work history in `data/work.js`.
+- Add or edit projects in `data/projects.js`.
 - Adjust the visual design in the single stylesheet at `assets/css/styles.css`.
 - Edit `.njk` files only when you want to change page structure or markup.
 
 ## Add a project
 
-Every project is one `createProject({...})` entry inside the `projects` array in `content.js`. The factory validates your fields during the build, the reusable component at `_includes/components/project-card.njk` turns the data into a card, and the generic `project.njk` template creates its Read More page at `/projects/{slug}/`.
+Every project is one `createProject({...})` entry in `data/projects.js`. The factory validates your fields during the build, the reusable component at `_includes/components/project-card.njk` turns the data into a card, and the generic `project.njk` template creates its Read More page at `/projects/{slug}/`.
 
 Duplicate any existing project object and edit the copy:
 
@@ -120,7 +125,7 @@ createProject({
 
 Available action types are `readMore`, `github`, `liveDemo`, and `site`. You can use one, several, repeated types, or none. `readMore` automatically links to the generated page, so it does not need an `href`. All other actions require an `href`. The `site` action uses `assets/drawings/site.svg`.
 
-After editing `content.js`, run `npm run dev`. The project card and detail page update automatically.
+After editing a file in `data/`, run `npm run dev`. The relevant pages update automatically.
 
 ## Run locally
 
