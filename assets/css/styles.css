@@ -17,9 +17,10 @@
 }
 
 * { box-sizing: border-box; }
+img { max-width: 100%; }
 
 /* Base document and animated background. */
-html { background: var(--background); }
+html { overflow-x: clip; background: var(--background); }
 body {
   position: relative;
   margin: 0;
@@ -30,6 +31,7 @@ body {
   line-height: 1.65;
   text-rendering: optimizeLegibility;
   transition: background-color 240ms ease, color 240ms ease;
+  overflow-x: clip;
 }
 
 body::before {
@@ -181,17 +183,38 @@ button:hover .drawing,
 main { min-height: 65vh; padding: clamp(3.5rem, 9vw, 6.5rem) 0 5rem; }
 
 /* Home page: identity, journal paper, and contact links. */
-.intro { max-width: 39rem; }
+.intro { width: 100%; max-width: 39rem; min-width: 0; }
 .identity-drawing {
   width: min(100%, 390px);
   height: auto;
 }
+.journal { position: relative; margin-top: clamp(2.75rem, 6vw, 4rem); }
+.journal-toggle {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  z-index: 3;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  padding: 0;
+  place-items: center;
+  background: transparent;
+  cursor: pointer;
+  transform-origin: center;
+  transition: transform 180ms ease;
+}
+.journal-toggle img { width: 30px; height: 30px; object-fit: contain; }
+.journal:hover .journal-toggle { transform: scale(1.06); }
+.journal .journal-toggle:hover { transform: scale(1.18); }
 .journal-paper {
   width: 100%;
-  margin-top: clamp(2.75rem, 6vw, 4rem);
+  margin-top: 0;
   padding: clamp(1.75rem, 5vw, 3rem);
   border: 1px solid var(--paper-line);
   border-radius: 3px;
+  overflow: hidden;
   background: var(--paper);
   box-shadow: 0 18px 50px var(--paper-shadow);
   transition: background-color 240ms ease, border-color 240ms ease, box-shadow 240ms ease, transform 180ms ease;
@@ -200,23 +223,109 @@ main { min-height: 65vh; padding: clamp(3.5rem, 9vw, 6.5rem) 0 5rem; }
 .journal-paper:hover { transform: scale(1.015); }
 .journal-drawing {
   width: 100%;
+  max-width: 100%;
   height: auto;
 }
 .journal-paper .journal-drawing:hover { transform: none; }
+.journal-dialog {
+  width: min(780px, calc(100% - 40px), calc(100dvh - 145px));
+  max-width: none;
+  max-height: none;
+  border: 0;
+  padding: 0;
+  overflow: visible;
+  background: transparent;
+  color: var(--text);
+}
+.journal-dialog[open] { animation: journal-open 220ms cubic-bezier(0.22, 1, 0.36, 1); }
+.journal-dialog:focus { outline: none; }
+.journal-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(2px);
+  animation: journal-backdrop-in 220ms ease-out;
+}
+.journal-dialog.is-closing { animation: journal-close 160ms ease-in forwards; }
+.journal-dialog.is-closing::backdrop { animation: journal-backdrop-out 160ms ease-in forwards; }
+@keyframes journal-open {
+  from { opacity: 0; transform: translateY(10px) scale(0.975); }
+}
+@keyframes journal-close {
+  to { opacity: 0; transform: translateY(6px) scale(0.985); }
+}
+@keyframes journal-backdrop-in { from { background: rgba(0, 0, 0, 0); backdrop-filter: blur(0); } }
+@keyframes journal-backdrop-out { to { background: rgba(0, 0, 0, 0); backdrop-filter: blur(0); } }
+.journal-dialog__content { position: relative; }
+.journal-dialog__close {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  z-index: 3;
+  display: grid;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  padding: 0;
+  place-items: center;
+  background: transparent;
+  cursor: pointer;
+  transform-origin: center;
+  transition: transform 180ms ease;
+}
+.journal-dialog__close img { width: 32px; height: 32px; object-fit: contain; }
+.journal-dialog__content:hover .journal-dialog__close { transform: scale(1.06); }
+.journal-dialog__content .journal-dialog__close:hover { transform: scale(1.18); }
+.journal-paper--expanded {
+  padding: clamp(2rem, 6vw, 4.5rem);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+}
+.journal-history {
+  display: grid;
+  margin-top: 2.5rem;
+  padding: 0 0 0.5rem;
+  place-items: center;
+}
+.journal-history__empty { width: min(100%, 240px); height: auto; }
 .intro__role, .page-description, .meta, .project-tech { color: var(--muted); }
 .intro__role { margin-bottom: 1.5rem; }
-.reach-out {
+.home-switcher {
+  --switcher-bleed: clamp(1.5rem, 6vw, 3.5rem);
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr) 46px;
+  align-items: center;
+  gap: clamp(1rem, 4vw, 2.5rem);
+  width: calc(100% + var(--switcher-bleed) + var(--switcher-bleed));
+  margin-top: clamp(5rem, 10vw, 7rem);
+  margin-left: calc(0px - var(--switcher-bleed));
+}
+.home-switcher__arrow {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  padding: 0;
+  place-items: center;
+  background: transparent;
+  cursor: pointer;
+}
+.home-switcher__arrow img { width: 34px; height: 34px; object-fit: contain; }
+.home-switcher__panels { min-width: 0; }
+.home-panel {
   display: grid;
   justify-items: center;
-  margin-top: clamp(5rem, 10vw, 7rem);
+  min-height: 230px;
   padding-top: 1rem;
   text-align: center;
 }
-.reach-out__title {
+.home-panel[hidden] { display: none; }
+.home-panel__title {
   width: min(100%, 290px);
   height: auto;
   margin-bottom: 1.75rem;
 }
+.home-panel.swipe-right { animation: panel-swipe-right 260ms cubic-bezier(0.22, 1, 0.36, 1); }
+.home-panel.swipe-left { animation: panel-swipe-left 260ms cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes panel-swipe-right { from { opacity: 0; transform: translateX(-22px); } }
+@keyframes panel-swipe-left { from { opacity: 0; transform: translateX(22px); } }
 .social-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -239,6 +348,22 @@ main { min-height: 65vh; padding: clamp(3.5rem, 9vw, 6.5rem) 0 5rem; }
 .social-list__email { grid-column: 1 / -1; justify-self: center; width: min(100%, 370px); }
 .social-icon { width: 22px; height: 22px; object-fit: contain; }
 .social-drawing { width: auto; height: 31px; max-width: 100%; object-fit: contain; object-position: left center; }
+.skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.65rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.skills-list li {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+}
+.skills-placeholder { display: grid; width: min(100%, 320px); gap: 0.8rem; }
+.skills-placeholder span { height: 1px; background: var(--line); }
 
 /* Shared page headings and Work page. */
 .page-header { margin-bottom: 3.5rem; }
@@ -363,21 +488,130 @@ main { min-height: 65vh; padding: clamp(3.5rem, 9vw, 6.5rem) 0 5rem; }
   transition: border-color 240ms ease, color 240ms ease;
 }
 .footer-signature { width: 200px; height: 52px; object-fit: contain; object-position: left center; }
-.footer-drawing { width: 36px; height: 36px; object-fit: contain; }
+.smiley-easter-egg { position: relative; display: block; flex: none; width: 36px; height: 36px; }
+.footer-drawing {
+  position: relative;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.footer-drawing.is-loose { z-index: 10; margin: 0; }
+.footer-drawing.is-dragging { cursor: grabbing; }
+.smiley-hint {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 0.7rem);
+  width: 120px;
+  max-width: none;
+  height: auto;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(5px, -50%);
+  transition: opacity 160ms ease, transform 160ms ease, filter 240ms ease;
+}
+.footer-drawing:hover + .smiley-hint { opacity: 1; transform: translate(0, -50%); }
+.footer-drawing.is-loose:hover + .smiley-hint { opacity: 0; }
 
 /* Responsive layouts. */
 @media (max-width: 520px) {
-  .site-header, main, .site-footer { width: min(var(--width), calc(100% - 32px)); }
-  .site-header { gap: 0.65rem; }
-  .site-nav ul { gap: 0.85rem; }
-  .nav-drawing { height: 22px; max-width: 72px; }
-  .theme-toggle__image { width: 48px; height: 24px; }
+  body { font-size: 15px; }
+  .site-header, main, .site-footer { width: calc(100% - 28px); }
+  .site-header {
+    gap: 0.35rem;
+    padding-top: 1.5rem;
+  }
+  .site-nav { min-width: 0; flex: 1 1 0; overflow: hidden; }
+  .site-nav ul { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; }
+  .site-nav li { min-width: 0; }
+  .site-nav a { display: grid; min-width: 0; padding: 0.35rem 0.1rem 0.55rem; place-items: center; }
+  .nav-drawing { height: 20px; max-width: 58px; }
+  .nav-underline { bottom: 0; height: 9px; }
+  .theme-toggle { width: 42px; height: 30px; }
+  .theme-toggle__image,
+  .theme-toggle__image[data-mode="dark"],
+  .theme-toggle__image[data-mode="light"] { width: 42px; height: 22px; }
+
+  main { min-height: 60vh; padding: 2.75rem 0 4rem; }
+  .identity-drawing { width: min(100%, 315px); }
+  .journal { margin-top: 2.25rem; }
+  .journal-toggle { top: -10px; right: -8px; width: 30px; height: 30px; }
+  .journal-toggle img { width: 26px; height: 26px; }
+  .journal-paper {
+    max-width: 100%;
+    margin-top: 0.6rem;
+    padding: clamp(1rem, 5vw, 1.4rem);
+    box-shadow: 0 12px 34px var(--paper-shadow);
+  }
+  .journal-dialog { width: min(calc(100% - 24px), calc(100dvh - 105px)); }
+  .journal-dialog__close { top: -10px; right: -8px; }
+  .journal-paper--expanded { padding: clamp(1rem, 5vw, 1.75rem); }
+  .journal-history { margin-top: 1.75rem; }
+  .journal-history__empty { width: min(100%, 190px); }
+
+  .page-header { margin-bottom: 2.5rem; }
+  .section-drawing { height: 52px; margin-bottom: 1rem; }
+  .work-list { gap: 2.5rem; }
+  .work-item ul { padding-left: 1.1rem; }
+
   .resume-item { grid-template-columns: 1fr; gap: 0.25rem; }
   .resume-item > .meta { text-align: left; }
-  .reach-out { margin-top: 3.75rem; }
+  .home-switcher {
+    grid-template-columns: 28px minmax(0, 1fr) 28px;
+    gap: 0.5rem;
+    width: 100%;
+    margin-top: 3.5rem;
+    margin-left: 0;
+  }
+  .home-switcher__arrow { width: 28px; height: 42px; }
+  .home-switcher__arrow img { width: 25px; height: 25px; }
+  .home-panel { min-height: 255px; padding-top: 0.5rem; }
+  .home-panel__title { width: min(100%, 220px); margin-bottom: 1.15rem; }
+  .social-list { grid-template-columns: 1fr; width: min(100%, 245px); gap: 0.35rem; }
+  .social-list a {
+    grid-template-columns: 21px minmax(0, 1fr);
+    gap: 0.65rem;
+    min-height: 44px;
+    padding: 0.2rem 0;
+  }
+  .social-icon { width: 19px; height: 19px; }
+  .social-drawing { height: 27px; }
+  .social-list__email { grid-column: auto; justify-self: stretch; width: 100%; }
+
   .projects-view main,
   .project-detail-view main { width: calc(100% - 32px); }
-  .project-grid { grid-template-columns: 1fr; }
+  .project-grid { grid-template-columns: minmax(0, 1fr); width: 100%; }
+  .project-card { width: 100%; max-width: 100%; }
+  .project-card__body { min-width: 0; }
+  .project-card h2,
+  .project-card p { overflow-wrap: anywhere; }
+  .project-card__body { padding: 1.1rem; }
+  .project-detail__back { margin-bottom: 1.4rem; }
+  .project-detail__cover { margin-bottom: 1.75rem; }
+  .project-detail__copy { margin: 1.75rem 0; }
+
+  .site-footer { padding: 1rem 0 2.25rem; }
+  .footer-signature { width: 155px; height: 44px; }
+  .smiley-easter-egg { width: 32px; height: 32px; }
+  .footer-drawing { width: 32px; height: 32px; }
+  .smiley-hint { right: calc(100% + 0.4rem); width: 92px; }
+}
+
+@media (max-width: 360px) {
+  .site-header, main, .site-footer { width: calc(100% - 24px); }
+  .site-header { gap: 0.2rem; }
+  .nav-drawing { height: 18px; max-width: 52px; }
+  .theme-toggle { width: 38px; }
+  .theme-toggle__image,
+  .theme-toggle__image[data-mode="dark"],
+  .theme-toggle__image[data-mode="light"] { width: 38px; }
+  .home-switcher { grid-template-columns: 24px minmax(0, 1fr) 24px; gap: 0.3rem; }
+  .home-switcher__arrow { width: 24px; }
+  .home-switcher__arrow img { width: 22px; height: 22px; }
+  .social-drawing { height: 24px; }
 }
 
 @media (min-width: 521px) and (max-width: 860px) {
@@ -447,5 +681,12 @@ main { min-height: 65vh; padding: clamp(3.5rem, 9vw, 6.5rem) 0 5rem; }
 @media (prefers-reduced-motion: reduce) {
   body::before { animation: none; }
   .drawing,
-  .journal-paper { transition: none; }
+  .journal-paper,
+  .journal-toggle,
+  .journal-dialog__close { transition: none; }
+  .home-panel { animation: none; }
+  .journal-dialog[open],
+  .journal-dialog::backdrop,
+  .journal-dialog.is-closing,
+  .journal-dialog.is-closing::backdrop { animation: none; }
 }

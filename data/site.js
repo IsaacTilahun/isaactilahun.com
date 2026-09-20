@@ -47,7 +47,10 @@ module.exports = {
   // Central map of hand-drawn assets used by the templates.
   drawings: {
     identity: "/assets/drawings/name-and-bio.svg",
-    homeJournal: "/assets/drawings/home-journal/1.0.svg",
+    homeJournal: "/assets/drawings/home-journal/note1.svg",
+    expandNote: "/assets/drawings/expand.svg",
+    contractNote: "/assets/drawings/contract.svg",
+    noPastNotes: "/assets/drawings/no-past-notes.svg",
     work: "/assets/drawings/work.svg",
     projects: "/assets/drawings/projects.svg",
     readMore: "/assets/drawings/read-more.svg",
@@ -59,10 +62,14 @@ module.exports = {
     linkedin: "/assets/drawings/linkedin-at.svg",
     email: "/assets/drawings/email-at.svg",
     reachOut: "/assets/drawings/reach-out.svg",
+    mySkills: "/assets/drawings/my-skills.svg",
+    leftArrow: "/assets/drawings/left-arrow.svg",
+    rightArrow: "/assets/drawings/right-arrow.svg",
     lightMode: "/assets/drawings/lightmode.svg",
     darkMode: "/assets/drawings/darkmode.svg",
     headerUnderline: "/assets/drawings/header-underline.svg",
     copyright: "/assets/drawings/2026-isaac-tilahun.svg",
-    smiley: "/assets/drawings/smiley.svg"
+    smiley: "/assets/drawings/smiley.svg",
+    throwHint: "/assets/drawings/throw-me-around.svg"
   }
 };

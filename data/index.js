@@ -4,5 +4,6 @@ const siteContent = require("./site.js");
 module.exports = {
   ...siteContent,
   work: require("./work.js"),
+  skills: require("./skills.js"),
   projects: require("./projects.js")
 };

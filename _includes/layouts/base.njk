@@ -44,7 +44,10 @@
     <main id="main">{{ content | safe }}</main>
     <footer class="site-footer">
       <img class="footer-signature drawing" src="{{ siteContent.drawings.copyright }}" alt="2026 Isaac Tilahun" loading="lazy" decoding="async">
-      <img class="footer-drawing drawing" src="{{ siteContent.drawings.smiley }}" alt="A hand-drawn smiley face" loading="lazy" decoding="async">
+      <span class="smiley-easter-egg">
+        <img class="footer-drawing drawing" src="{{ siteContent.drawings.smiley }}" alt="A hand-drawn smiley face" loading="lazy" decoding="async" draggable="false">
+        <img class="smiley-hint drawing" src="{{ siteContent.drawings.throwHint }}" alt="Throw me around" loading="lazy" decoding="async">
+      </span>
     </footer>
   </body>
 </html>

@@ -9,7 +9,7 @@ This is a static website with no backend or database:
 - **Eleventy (11ty)** is the static-site generator. It reads the source files, combines templates with data, and writes ordinary HTML into `_site/`.
 - **Nunjucks** is the HTML templating language used by Eleventy. Its files end in `.njk`. It provides variables, loops, conditions, layouts, and reusable macros.
 - **Vanilla CSS** controls all layout, responsive behavior, themes, and animation. There is no CSS framework.
-- **Vanilla JavaScript** controls the light/dark theme switch and subtle project-card sway. There is no frontend framework.
+- **Vanilla JavaScript** controls the theme switch, Home panel arrows, project-card sway, and throwable footer smiley. There is no frontend framework.
 - **SVG assets** contain the hand-drawn visual identity.
 
 Visitors never download Eleventy or Nunjucks. Those tools run only during development and deployment. The deployed `_site/` folder contains plain HTML, CSS, JavaScript, and images.
@@ -53,6 +53,7 @@ The block between `---` markers at the top of a `.njk` file is called front matt
 
 - `data/site.js`: identity, contact links, navigation, metadata, and drawing paths.
 - `data/work.js`: work history used by the Work and Resume pages.
+- `data/skills.js`: skill names displayed in the Home page's My Skills panel.
 - `data/projects.js`: project entries plus the `createProject` validation helper.
 - `data/index.js`: combines the three data sections for Eleventy. You will rarely edit it.
 - `index.njk`, `work.njk`, `projects.njk`, `resume.njk`: the four main page templates.
@@ -69,6 +70,7 @@ The block between `---` markers at the top of a `.njk` file is called front matt
 
 - Update identity, socials, navigation, and drawing paths in `data/site.js`.
 - Update work history in `data/work.js`.
+- Add skill names to the array in `data/skills.js`.
 - Add or edit projects in `data/projects.js`.
 - Adjust the visual design in the single stylesheet at `assets/css/styles.css`.
 - Edit `.njk` files only when you want to change page structure or markup.
