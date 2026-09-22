@@ -1,0 +1,20 @@
+---
+layout: layouts/base.njk
+pagination:
+  data: siteContent.workDetails
+  size: 1
+  alias: role
+  addAllPagesToCollections: false
+permalink: "/work/{{ role.slug }}/"
+eleventyComputed:
+  title: "{{ role.title }} - Isaac Tilahun"
+  description: "{{ role.description or role.title }}"
+---
+
+<article class="work-detail">
+  <a href="{{ '/work/' | url }}" aria-label="Back to work"><img class="work-detail__back drawing" src="/assets/drawings/back.svg" alt=""></a>
+  <h1><img class="work-item__drawing drawing" src="{{ role.drawing }}" alt="{{ role.title }}"></h1>
+  {% if role.dates %}<p class="meta">{{ role.dates }}</p>{% endif %}
+  {% if role.description %}<p>{{ role.description }}</p>{% endif %}
+  {% for paragraph in role.details %}<p>{{ paragraph }}</p>{% endfor %}
+</article>

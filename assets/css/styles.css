@@ -241,19 +241,18 @@ main { min-height: 65vh; padding: clamp(3.5rem, 9vw, 6.5rem) 0 5rem; }
 .journal-dialog:focus { outline: none; }
 .journal-dialog::backdrop {
   background: rgba(0, 0, 0, 0.78);
-  backdrop-filter: blur(2px);
   animation: journal-backdrop-in 220ms ease-out;
 }
 .journal-dialog.is-closing { animation: journal-close 160ms ease-in forwards; }
 .journal-dialog.is-closing::backdrop { animation: journal-backdrop-out 160ms ease-in forwards; }
 @keyframes journal-open {
-  from { opacity: 0; transform: translateY(10px) scale(0.975); }
+  from { opacity: 0; }
 }
 @keyframes journal-close {
-  to { opacity: 0; transform: translateY(6px) scale(0.985); }
+  to { opacity: 0; }
 }
-@keyframes journal-backdrop-in { from { background: rgba(0, 0, 0, 0); backdrop-filter: blur(0); } }
-@keyframes journal-backdrop-out { to { background: rgba(0, 0, 0, 0); backdrop-filter: blur(0); } }
+@keyframes journal-backdrop-in { from { background: rgba(0, 0, 0, 0); } }
+@keyframes journal-backdrop-out { to { background: rgba(0, 0, 0, 0); } }
 .journal-dialog__content { position: relative; }
 .journal-dialog__close {
   position: absolute;
@@ -378,6 +377,10 @@ main { min-height: 65vh; padding: clamp(3.5rem, 9vw, 6.5rem) 0 5rem; }
 .work-item p { margin-bottom: 0.65rem; }
 .work-item ul { margin: 0.9rem 0 0; }
 .work-item li + li { margin-top: 0.35rem; }
+.work-item__drawing { display: block; width: auto; max-width: min(100%, 300px); max-height: 64px; }
+.work-item__action { display: block; width: auto; height: 26px; max-width: 112px; }
+.work-detail__back { width: auto; height: 26px; margin-bottom: 2rem; }
+.work-detail h1 { margin: 0 0 1rem; }
 
 /* Projects index: responsive cards generated from data/projects.js. */
 .projects-view main {

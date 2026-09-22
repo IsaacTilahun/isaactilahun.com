@@ -1,9 +1,11 @@
 const siteContent = require("./site.js");
+const work = require("./work.js");
 
 // Eleventy receives one object, while editable content stays in focused files.
 module.exports = {
   ...siteContent,
-  work: require("./work.js"),
+  work,
+  workDetails: work.filter((role) => role.readMore),
   skills: require("./skills.js"),
   projects: require("./projects.js")
 };

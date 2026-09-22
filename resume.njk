@@ -18,9 +18,9 @@ permalink: /resume/
       <article class="resume-item">
         <div>
           <h3>{{ role.title }}</h3>
-          <p>{{ role.company }}</p>
+          {% if role.company %}<p>{{ role.company }}</p>{% endif %}
         </div>
-        <p class="meta">{{ role.dates }}</p>
+        {% if role.dates %}<p class="meta">{{ role.dates }}</p>{% endif %}
       </article>
     {% endfor %}
   </div>
