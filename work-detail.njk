@@ -16,5 +16,7 @@ eleventyComputed:
   <h1><img class="work-item__drawing drawing" src="{{ role.drawing }}" alt="{{ role.title }}"></h1>
   {% if role.dates %}<p class="meta">{{ role.dates }}</p>{% endif %}
   {% if role.description %}<p>{{ role.description }}</p>{% endif %}
-  {% for paragraph in role.details %}<p>{{ paragraph }}</p>{% endfor %}
+  {% if role.bullets and role.bullets.length %}
+    <ul>{% for bullet in role.bullets %}<li>{{ bullet }}</li>{% endfor %}</ul>
+  {% endif %}
 </article>

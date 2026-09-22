@@ -15,9 +15,12 @@ permalink: /work/
       <h2><img class="work-item__drawing drawing" src="{{ role.drawing }}" alt="{{ role.title }}"></h2>
       {% if role.dates %}<p class="meta">{{ role.dates }}</p>{% endif %}
       {% if role.description %}<p>{{ role.description }}</p>{% endif %}
+      {% if role.bullets and role.bullets.length %}
+        <ul>{% for bullet in role.bullets %}<li>{{ bullet }}</li>{% endfor %}</ul>
+      {% endif %}
       {% if role.readMore %}
-        <a href="{{ ('/work/' + role.slug + '/') | url }}" aria-label="Read more about {{ role.title }}">
-          <img class="work-item__action drawing" src="{{ siteContent.drawings.readMore }}" alt="Read More">
+        <a class="work-item__read-more" href="{{ ('/work/' + role.slug + '/') | url }}" aria-label="Read more about {{ role.title }}">
+          <img class="work-item__action drawing" src="{{ siteContent.drawings.readMoreWork }}" alt="Read More">
         </a>
       {% endif %}
     </article>

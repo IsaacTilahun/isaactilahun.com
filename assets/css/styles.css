@@ -378,7 +378,8 @@ main { min-height: 65vh; padding: clamp(3.5rem, 9vw, 6.5rem) 0 5rem; }
 .work-item ul { margin: 0.9rem 0 0; }
 .work-item li + li { margin-top: 0.35rem; }
 .work-item__drawing { display: block; width: auto; max-width: min(100%, 300px); max-height: 64px; }
-.work-item__action { display: block; width: auto; height: 26px; max-width: 112px; }
+.work-item__read-more { display: inline-block; margin-top: 1.25rem; }
+.work-item__action { display: block; width: auto; height: 38px; max-width: 170px; }
 .work-detail__back { width: auto; height: 26px; margin-bottom: 2rem; }
 .work-detail h1 { margin: 0 0 1rem; }
 

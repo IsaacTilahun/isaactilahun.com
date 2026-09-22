@@ -58,11 +58,6 @@ module.exports = [
     ],
     actions: [
       { type: "readMore", label: "Read More" },
-      {
-        type: "liveDemo",
-        label: "Live Demo",
-        href: "https://isaactilahun.com"
-      }
     ]
   }),
 
@@ -84,12 +79,8 @@ module.exports = [
       {
         type: "github",
         label: "GitHub",
+
         href: "https://github.com/isaactilahun"
-      },
-      {
-        type: "liveDemo",
-        label: "Live Demo",
-        href: "https://isaactilahun.com"
       }
     ]
   }),
@@ -137,15 +128,11 @@ module.exports = [
       "Add, remove, or reorder paragraphs in this array without changing any templates."
     ],
     actions: [
+      { type: "readMore", label: "Read More" },
       {
-        type: "github",
-        label: "GitHub",
-        href: "https://github.com/isaactilahun"
-      },
-      {
-        type: "site",
-        label: "Site",
-        href: "https://isaactilahun.com"
+        type: "liveDemo",
+        label: "Live Demo",
+        href: "https://drive.google.com/drive/u/0/folders/1uFniwYgom5IU9cF5hLYqUx4Ssoe36fCm"
       }
     ]
   }),
@@ -165,12 +152,12 @@ module.exports = [
       "Add, remove, or reorder paragraphs in this array without changing any templates."
     ],
     actions: [
-      { type: "readMore", label: "Read More" },
       {
-        type: "site",
-        label: "Site",
-        href: "https://isaactilahun.com"
-      }
+        type: "github",
+        label: "GitHub",
+        href: "https://github.com/isaactilahun"
+      },
+      { type: "readMore", label: "Read More" }
     ]
   })
 ];

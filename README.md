@@ -148,4 +148,4 @@ The static output is written to `_site/`.
 
 ## Deploy
 
-GitHub Pages can use the included workflow in `.github/workflows/deploy.yml`. For Vercel, set the build command to `npm run build` and the output directory to `_site`.
+For a static host, set the build command to `npm run build` and publish the `_site` directory.

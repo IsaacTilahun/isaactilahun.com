@@ -54,6 +54,7 @@ module.exports = {
     work: "/assets/drawings/work.svg",
     projects: "/assets/drawings/projects.svg",
     readMore: "/assets/drawings/read-more.svg",
+    readMoreWork: "/assets/drawings/read-more-work.svg",
     githubAction: "/assets/drawings/github-click.svg",
     liveDemo: "/assets/drawings/live-demo.svg",
     site: "/assets/drawings/site.svg",
