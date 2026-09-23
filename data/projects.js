@@ -32,6 +32,7 @@ function createProject(project) {
   });
 
   return {
+    tag: "",
     tech: [],
     details: [],
     actions: [],
@@ -45,11 +46,12 @@ module.exports = [
   createProject({
     slug: "mysh",
     title: "Unix Shell & Networked Chat",
+    // Optional: tag: "TELUS Hackathon",
     description:
       "Built a Unix-style shell from scratch in C with process management, multi-stage pipes, signals, and custom built-ins, then extended it with socket programming to support a client-server chat system.",
     cover: {
       src: "/assets/images/mysh.png",
-      alt: "Mysh Unix shell project cover with a terminal prompt"
+      alt: "Terminal connected to two network chat clients"
     },
     tech: ["C", "Linux"],
     details: [
@@ -64,11 +66,12 @@ module.exports = [
   createProject({
     slug: "asl-learning-hub",
     title: "Real-Time ASL Learning Platform",
+    tag: "TELUS Hackathon",
     description:
       "Built an interactive ASL learning experience using MediaPipe to track 21 hand landmarks in real time, score gestures, and provide live visual feedback across letters and numbers.",
     cover: {
-      src: "/assets/images/mysh.png",
-      alt: "Mysh Unix shell project cover with a terminal prompt"
+      src: "/assets/images/asl-learning.png",
+      alt: "ASL learning interface tracking a gray illustrated learner with coily hair while teaching the letter C"
     },
     tech: ["JavaScript", "MediaPipe", "Computer Vision"],
     details: [
@@ -88,11 +91,12 @@ module.exports = [
   createProject({
     slug: "heycare",
     title: "AI Clinical Documentation Platform",
+    tag: "TechTO Hackathon",
     description:
       "Built a hackathon platform that transcribes patient-clinician conversations and uses AI to turn them into structured medical documentation, with persistent patient records and export workflows.",
     cover: {
-      src: "/assets/images/mysh.png",
-      alt: "Mysh Unix shell project cover with a terminal prompt"
+      src: "/assets/images/heycare.png",
+      alt: "HeyCare voice recording dashboard with live clinical transcription"
     },
     tech: ["TypeScript", "CSS", "Supabase"],
     details: [
@@ -119,8 +123,8 @@ module.exports = [
     description:
       "Built a JavaFX drawing application around MVC and object-oriented design patterns, with undo/redo, multiple drawing strategies, and AI-generated JSON instructions for rendering shapes to the canvas.",
     cover: {
-      src: "/assets/images/mysh.png",
-      alt: "Mysh Unix shell project cover with a terminal prompt"
+      src: "/assets/images/paint.png",
+      alt: "Vibrant digital paint canvas with drawing tools and AI-assisted controls"
     },
     tech: ["Java", "JavaFX", "MVC"],
     details: [
@@ -143,8 +147,8 @@ module.exports = [
     description:
       "Built a grid-based game entirely in RISC-V Assembly, implementing game state, randomized board generation, player and enemy movement, win/loss conditions, and persistent leaderboard functionality through low-level memory and control flow.",
     cover: {
-      src: "/assets/images/mysh.png",
-      alt: "Mysh Unix shell project cover with a terminal prompt"
+      src: "/assets/images/riscv.png",
+      alt: "Terminal views showing gameplay, round setup, and player rankings for Scared of the Dark"
     },
     tech: ["RISC-V Assembly"],
     details: [

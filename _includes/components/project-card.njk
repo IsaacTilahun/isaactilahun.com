@@ -29,6 +29,7 @@
     <img class="project-card__cover" src="{{ project.cover.src }}" alt="{{ project.cover.alt }}" loading="lazy" decoding="async">
     <div class="project-card__body">
       <h2>{{ project.title }}</h2>
+      {% if project.tag %}<p class="project-tag">{{ project.tag }}</p>{% endif %}
       <p>{{ project.description }}</p>
 
       {% if project.tech and project.tech.length %}

@@ -46,23 +46,6 @@ if (themeToggle) {
   });
 }
 
-// The Home arrows swap between Reach Out and My Skills in the same space.
-const homePanels = [...document.querySelectorAll("[data-home-panel]")];
-let activeHomePanel = 0;
-
-document.querySelectorAll("[data-panel-direction]").forEach((button) => {
-  button.addEventListener("click", () => {
-    const direction = Number(button.dataset.panelDirection);
-    homePanels[activeHomePanel].hidden = true;
-    activeHomePanel = (activeHomePanel + direction + homePanels.length) % homePanels.length;
-
-    const nextPanel = homePanels[activeHomePanel];
-    nextPanel.classList.remove("swipe-left", "swipe-right");
-    nextPanel.classList.add(direction > 0 ? "swipe-right" : "swipe-left");
-    nextPanel.hidden = false;
-  });
-});
-
 // Open the journal as a modal reading view; the native dialog blocks the page.
 const journalDialog = document.querySelector("[data-journal-dialog]");
 const openJournal = document.querySelector("[data-journal-open]");

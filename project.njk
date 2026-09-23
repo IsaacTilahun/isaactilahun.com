@@ -19,6 +19,7 @@ eleventyComputed:
   <a class="project-detail__back" href="{{ '/projects/' | url }}">Back to projects</a>
   <img class="project-detail__cover" src="{{ project.cover.src }}" alt="{{ project.cover.alt }}">
   <h1>{{ project.title }}</h1>
+  {% if project.tag %}<p class="project-tag">{{ project.tag }}</p>{% endif %}
   <p class="project-detail__summary">{{ project.description }}</p>
 
   {% if project.details and project.details.length %}

@@ -6,6 +6,5 @@ module.exports = {
   ...siteContent,
   work,
   workDetails: work.filter((role) => role.readMore),
-  skills: require("./skills.js"),
   projects: require("./projects.js")
 };

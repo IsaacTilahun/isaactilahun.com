@@ -53,7 +53,6 @@ The block between `---` markers at the top of a `.njk` file is called front matt
 
 - `data/site.js`: identity, contact links, navigation, metadata, and drawing paths.
 - `data/work.js`: work history used by the Work and Resume pages.
-- `data/skills.js`: skill names displayed in the Home page's My Skills panel.
 - `data/projects.js`: project entries plus the `createProject` validation helper.
 - `data/index.js`: combines the three data sections for Eleventy. You will rarely edit it.
 - `index.njk`, `work.njk`, `projects.njk`, `resume.njk`: the four main page templates.
@@ -86,6 +85,8 @@ createProject({
   // Required: unique, lowercase, and hyphenated.
   slug: "my-project",
   title: "My Project",
+  // Optional: omit this line when the project does not need a tag.
+  tag: "TELUS Hackathon",
   description: "A short description shown on the project card.",
 
   // Put cover images in assets/images/.

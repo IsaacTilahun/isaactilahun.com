@@ -31,52 +31,28 @@ permalink: /
       </div>
     </div>
   </dialog>
-  <section class="home-switcher" aria-label="Contact and skills">
-    <button class="home-switcher__arrow" type="button" data-panel-direction="-1" aria-label="Show previous section">
-      <img class="drawing" src="{{ siteContent.drawings.leftArrow }}" alt="" aria-hidden="true">
-    </button>
-
-    <div class="home-switcher__panels" aria-live="polite">
-      <section class="home-panel reach-out" data-home-panel aria-labelledby="reach-out-title">
-        <h2 class="sr-only" id="reach-out-title">Reach out</h2>
-        <img class="home-panel__title drawing" src="{{ siteContent.drawings.reachOut }}" alt="Reach out!" loading="lazy" decoding="async">
-        <ul class="social-list" aria-label="Social links">
-          <li class="social-list__linkedin">
-            <a href="{{ siteContent.socials[1].href }}" rel="me noopener" target="_blank">
-              <img class="social-icon drawing" src="{{ siteContent.socials[1].icon }}" alt="" aria-hidden="true" loading="lazy" decoding="async">
-              <img class="social-drawing drawing" src="{{ siteContent.drawings.linkedin }}" alt="LinkedIn: isaactil" loading="lazy" decoding="async">
-            </a>
-          </li>
-          <li class="social-list__isaac">
-            <a href="{{ siteContent.socials[0].href }}" rel="me noopener" target="_blank">
-              <img class="social-icon drawing" src="{{ siteContent.socials[0].icon }}" alt="" aria-hidden="true" loading="lazy" decoding="async">
-              <img class="social-drawing drawing" src="{{ siteContent.drawings.github }}" alt="GitHub: IsaacTilahun" loading="lazy" decoding="async">
-            </a>
-          </li>
-          <li class="social-list__email">
-            <a href="{{ siteContent.socials[2].href }}" rel="me">
-              <img class="social-icon drawing" src="{{ siteContent.socials[2].icon }}" alt="" aria-hidden="true" loading="lazy" decoding="async">
-              <img class="social-drawing drawing" src="{{ siteContent.drawings.email }}" alt="Email Isaac Tilahun" loading="lazy" decoding="async">
-            </a>
-          </li>
-        </ul>
-      </section>
-
-      <section class="home-panel skills-panel" data-home-panel aria-labelledby="skills-title" hidden>
-        <h2 class="sr-only" id="skills-title">My skills</h2>
-        <img class="home-panel__title drawing" src="{{ siteContent.drawings.mySkills }}" alt="My skills" loading="lazy" decoding="async">
-        {% if siteContent.skills.length %}
-          <ul class="skills-list">
-            {% for skill in siteContent.skills %}<li>{{ skill }}</li>{% endfor %}
-          </ul>
-        {% else %}
-          <div class="skills-placeholder" aria-hidden="true"><span></span><span></span><span></span></div>
-        {% endif %}
-      </section>
-    </div>
-
-    <button class="home-switcher__arrow" type="button" data-panel-direction="1" aria-label="Show next section">
-      <img class="drawing" src="{{ siteContent.drawings.rightArrow }}" alt="" aria-hidden="true">
-    </button>
+  <section class="reach-out" aria-labelledby="reach-out-title">
+    <h2 class="sr-only" id="reach-out-title">Reach out</h2>
+    <img class="reach-out__title drawing" src="{{ siteContent.drawings.reachOut }}" alt="Reach out!" loading="lazy" decoding="async">
+    <ul class="social-list" aria-label="Social links">
+      <li class="social-list__linkedin">
+        <a href="{{ siteContent.socials[1].href }}" rel="me noopener" target="_blank">
+          <img class="social-icon drawing" src="{{ siteContent.socials[1].icon }}" alt="" aria-hidden="true" loading="lazy" decoding="async">
+          <img class="social-drawing drawing" src="{{ siteContent.drawings.linkedin }}" alt="LinkedIn: isaactil" loading="lazy" decoding="async">
+        </a>
+      </li>
+      <li class="social-list__isaac">
+        <a href="{{ siteContent.socials[0].href }}" rel="me noopener" target="_blank">
+          <img class="social-icon drawing" src="{{ siteContent.socials[0].icon }}" alt="" aria-hidden="true" loading="lazy" decoding="async">
+          <img class="social-drawing drawing" src="{{ siteContent.drawings.github }}" alt="GitHub: IsaacTilahun" loading="lazy" decoding="async">
+        </a>
+      </li>
+      <li class="social-list__email">
+        <a href="{{ siteContent.socials[2].href }}" rel="me">
+          <img class="social-icon drawing" src="{{ siteContent.socials[2].icon }}" alt="" aria-hidden="true" loading="lazy" decoding="async">
+          <img class="social-drawing drawing" src="{{ siteContent.drawings.email }}" alt="Email Isaac Tilahun" loading="lazy" decoding="async">
+        </a>
+      </li>
+    </ul>
   </section>
 </article>
