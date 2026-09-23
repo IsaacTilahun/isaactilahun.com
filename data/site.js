@@ -53,6 +53,7 @@ module.exports = {
     noPastNotes: "/assets/drawings/no-past-notes.svg",
     work: "/assets/drawings/work.svg",
     projects: "/assets/drawings/projects.svg",
+    back: "/assets/drawings/back.svg",
     readMore: "/assets/drawings/read-more.svg",
     readMoreWork: "/assets/drawings/read-more-work.svg",
     githubAction: "/assets/drawings/github-click.svg",
