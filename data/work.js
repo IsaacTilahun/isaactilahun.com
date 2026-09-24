@@ -6,10 +6,10 @@ module.exports = [
     drawing: "/assets/drawings/attendify.svg",
     dates: "July 2026 - September 2026",
     bullets: [
-      "Designed and built Attendify Wrapped, a year-end analytics dashboard for daycare franchises, driving the feature from proposal to production-ready implementation including an automated cron-based data pipeline in PHP/CodeIgniter",
-      "Extended the subscription-renewal invoicing system with automated email delivery, payment-status tracking, and overdue detection; built a reusable mailer library and a franchise-facing Account Invoices page",
-      "Built a role-scoped admin activity dashboard and expanded logging to record before-and-after values for field edits, improving platform auditability",
-      "Audited controllers, models, and libraries for unsafe database calls and resolved SQL injection vulnerabilities by tracing user input through the application"
+      "Led Attendify Wrapped, a year-end recap for daycare franchises, from architecture proposal to full build: presented the design to the engineering team, prototyped a demo branch, then built the data model, a cron job computing 17 stats per franchise (care hours, billing totals) without modifying source data, and the dashboard in PHP (CodeIgniter).",
+      "Audited controllers, models, and libraries for SQL injection, tracing user input to database calls; fixed all high- and medium-severity findings with parameterized queries.",
+      "Extended subscription-renewal invoicing with automated email delivery, mark-paid tracking, and overdue detection; refactored it into a mailer library and built the Account Invoices page.",
+      "Built a role-scoped admin activity dashboard with before-and-after field-change logging; fixed the app-wide \"Confirm Form Resubmission\" error with a Post-Redirect-Get shim."
     ],
     readMore: false
   },
@@ -19,8 +19,7 @@ module.exports = [
     drawing: "/assets/drawings/code-ninjas.svg",
     dates: "April 2026 - Present",
     bullets: [
-      "Instructed 100+ students from elementary to Grade 10 in JavaScript, C#, Unity, Scratch, and game development, progressing students from fundamentals to fully completed project builds",
-      "Designed and led a 12-week Python course for children, writing all curriculum from scratch and taking students from zero programming experience to independently completed projects"
+      "Teach 100+ students (elementary to Grade 10) programming and game development; designed and led a 12-week intro Python course from scratch."
     ],
     readMore: false
   }
