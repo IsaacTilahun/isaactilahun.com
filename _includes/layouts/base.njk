@@ -20,9 +20,9 @@
       })();
     </script>
     <link rel="stylesheet" href="{{ '/assets/css/styles.css' | url }}">
-    {# Fetch the other small static pages early so header navigation feels instant. #}
+    {# Fetch small site pages early; large files such as the resume opt out. #}
     {% for item in siteContent.navigation %}
-      {% if page.url != item.url %}<link rel="prefetch" href="{{ item.url | url }}" as="document">{% endif %}
+      {% if item.prefetch != false and page.url != item.url %}<link rel="prefetch" href="{{ item.url | url }}" as="document">{% endif %}
     {% endfor %}
     <script src="{{ '/assets/js/main.js' | url }}" defer></script>
   </head>

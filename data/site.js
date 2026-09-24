@@ -15,7 +15,12 @@ module.exports = {
     { label: "Home", url: "/", drawing: "/assets/drawings/home.svg" },
     { label: "Work", url: "/work/", drawing: "/assets/drawings/work.svg" },
     { label: "Projects", url: "/projects/", drawing: "/assets/drawings/projects.svg" },
-    { label: "Resume", url: "/resume/", drawing: "/assets/drawings/resume.svg" }
+    {
+      label: "Resume",
+      url: "/assets/pdf/Isaac_Tilahun_Resume.pdf",
+      drawing: "/assets/drawings/resume.svg",
+      prefetch: false
+    }
   ],
 
   author: {

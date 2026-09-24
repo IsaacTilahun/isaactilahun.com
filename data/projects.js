@@ -58,7 +58,8 @@ module.exports = [
       {
         heading: "Overview",
         paragraphs: [
-          "I built mysh to understand what a command shell is doing beneath the prompt. It parses commands, expands shell variables, connects multi-stage pipelines, manages foreground and background processes, and exposes a TCP chat server and client as built-in commands."
+          "I built mysh to understand what a command shell is doing beneath the prompt. It parses commands, expands shell variables, connects multi-stage pipelines, manages foreground and background processes, and exposes a TCP chat server and client as built-in commands.",
+          "The simplest mental model is that mysh translates text into operating-system work. Parsing determines what the user requested; fork and execvp create and replace processes; dup2 rewires their input and output; waitpid collects finished children; and select keeps network sockets responsive without adding threads."
         ]
       },
       {
@@ -66,13 +67,25 @@ module.exports = [
         paragraphs: [
           "The interactive loop first collects completed background processes, services the chat server, then reads and executes the next command. SIGINT returns control to the prompt instead of terminating the shell, while SIGPIPE is ignored so a disconnected client becomes a recoverable write failure."
         ],
-        code: `while ((pid = waitpid(-1, &status, WNOHANG)) > 0) {
-    if (get_process_num(pid) != -1) {
-        del_process(pid);
+        diagram: {
+          label: "Command flow through the shell",
+          items: [
+            { title: "Read", description: "Collect one command line" },
+            { title: "Parse", description: "Tokenize and identify syntax" },
+            { title: "Expand", description: "Resolve shell variables" },
+            { title: "Execute", description: "Run a builtin or process" },
+            { title: "Clean up", description: "Wait, reap, close, and free" }
+          ]
+        },
+        code: `while ((exited_pid = waitpid(-1, &stat, WNOHANG)) > 0) {
+    if (get_process_num(exited_pid) != -1) {
+        del_process(exited_pid);
     }
 }
 
-handle_server();
+if (server_running) {
+    handle_server();
+}
 get_input2(input_buf);`
       },
       {
@@ -85,8 +98,8 @@ get_input2(input_buf);`
 while (early_dollar != NULL) {
     if (late_dollar != NULL) {
         *late_dollar = '\\0';
-        char *value = find_variable(early_dollar + 1);
-        strncat(expanded_token, value, 128 - strlen(expanded_token));
+        char *expanded_var = find_variable(early_dollar + 1);
+        strncat(expanded_token, expanded_var, 128 - strlen(expanded_token));
         early_dollar = late_dollar;
         late_dollar = strchr(late_dollar + 1, '$');
     } else {
@@ -141,7 +154,9 @@ FD_SET(STDIN_FILENO, &fds);
 FD_SET(fd, &fds);
 int max_fd = STDIN_FILENO > fd ? STDIN_FILENO : fd;
 
-struct timeval tv = { .tv_sec = 0, .tv_usec = 100000 };
+struct timeval tv;
+tv.tv_sec = 0;
+tv.tv_usec = 100000;
 int ready = select(max_fd + 1, &fds, NULL, NULL, &tv);
 
 if (FD_ISSET(fd, &fds)) {
@@ -152,9 +167,10 @@ if (FD_ISSET(STDIN_FILENO, &fds)) {
 }`
       },
       {
-        heading: "Project summary",
+        heading: "How the pieces fit together",
         paragraphs: [
-          "This project brings command parsing, variable expansion, pipelines, background jobs, signal handling, and non-blocking TCP chat into one Unix-style shell. It demonstrates systems programming across process, memory, file descriptor, and socket management in C."
+          "A normal command is read, tokenized, expanded, and dispatched as either a builtin or an external program. A pipeline repeats that execution path across several child processes, with file descriptors connecting one stage's output to the next stage's input. A background command follows the same process model, but the parent returns to the prompt instead of waiting immediately.",
+          "The chat feature applies the same file-descriptor thinking to sockets. select reports which descriptors are ready, so one loop can react to terminal input, new connections, client messages, and disconnects. The central systems lesson is that correct cleanup matters as much as execution: every process, allocation, pipe end, and socket needs a clear owner and lifetime."
         ]
       }
     ],
@@ -229,20 +245,21 @@ if (FD_ISSET(STDIN_FILENO, &fds)) {
         heading: "Overview",
         paragraphs: [
           "I built this desktop paint application as a study in maintainable object-oriented design, not just canvas rendering. It supports seven drawing modes, fill and outline styles, line thickness and opacity controls, undo and redo, PNG export, persistent themes, colour-blind palettes, keyboard shortcuts, and prompt-generated drawings.",
-          "The main design goal was to keep input handling, drawing state, and rendering independent. That separation made it possible to add tools and alternate input paths without turning the canvas into one large event handler."
+          "The main design goal was to keep input handling, drawing state, and rendering independent. That separation made it possible to add tools and alternate input paths without turning the canvas into one large event handler.",
+          "The simplest mental model is: controllers interpret input, strategies or commands decide what that input means, the model stores the result, and the observed canvas redraws the model. No mouse handler draws directly to the final canvas state."
         ]
       },
       {
         heading: "How an interaction moves through MVC",
         paragraphs: [
-          "JavaFX events enter through small controllers. A controller selects either a drawing strategy or menu command, which updates the shared model. The model notifies its observers, and the canvas redraws every stored Drawable in order. The view never decides how a circle is resized or how undo works; it only renders the resulting state."
+          "JavaFX events enter through small controllers. Mouse input selects a drawing strategy, menu and keyboard input execute shared commands, and prompt input delegates generation to the model. These paths update the same drawing state, after which the canvas redraws every stored Drawable in order. The canvas view never decides how a circle is resized or how undo works; it renders the resulting state."
         ],
         diagram: {
           label: "Input-to-render flow",
           items: [
-            { title: "Input", description: "Mouse, keyboard, menu, or prompt" },
+            { title: "Input", description: "Mouse, keyboard, or menu" },
             { title: "Controller", description: "Translates the JavaFX event" },
-            { title: "Strategy / Command", description: "Applies tool-specific behaviour" },
+            { title: "Behaviour", description: "Applies a strategy or command" },
             { title: "Model", description: "Owns drawables and history" },
             { title: "View", description: "Observes state and redraws" }
           ]
@@ -252,7 +269,7 @@ if (FD_ISSET(STDIN_FILENO, &fds)) {
         heading: "Extensible drawing tools",
         paragraphs: [
           "The Strategy pattern gives every tool the same mouse lifecycle: press, drag, move, and release. A factory chooses the active strategy from the selected mode, so the canvas controller does not need shape-specific branches. Adding another tool means implementing one strategy and one Drawable, then registering the new mode.",
-          "Shape strategies create a provisional object on press, update its geometry while dragging, and plant it on release so it can no longer be edited accidentally. Freehand strokes use linked points with explicit endpoints, while geometric shapes calculate dimensions from the initial anchor and current pointer position."
+          "Drag-based shapes create a provisional object on press, update their geometry while dragging, and become fixed on release. Freehand strokes use linked points with explicit endpoints, while polylines and triangles collect successive clicks and display a live hover preview before completion."
         ],
         code: `interface StrategyPaint {
     void mousePressed();
@@ -262,26 +279,28 @@ if (FD_ISSET(STDIN_FILENO, &fds)) {
 }
 
 switch (mode) {
-    case "circle" -> new StrategyCircle(model, event);
-    case "squiggle" -> new StrategySquiggle(model, event);
-    case "polyline" -> new StrategyPolyline(model, event);
+    case "circle" -> new StrategyCircle(activeModel, mouseEvent);
+    case "squiggle" -> new StrategySquiggle(activeModel, mouseEvent);
+    case "polyline" -> new StrategyPolyline(activeModel, mouseEvent);
 }`
       },
       {
         heading: "Model-driven rendering",
         paragraphs: [
-          "The model is the source of truth for the ordered drawable collection and active tool settings. Every drawable owns its geometry, colour, opacity, thickness, fill state, and draw operation. This polymorphic boundary lets the canvas render mixed shapes through one loop.",
-          "Model changes notify observers. The canvas clears itself, restores the active background, and redraws the collection in order. The same notification path handles live drag previews, completed shapes, undo, theme changes, and generated drawings."
+          "The model is the source of truth for the ordered drawable collection and active tool settings. Every Drawable owns its geometry and rendering behaviour; shape types also carry colour, opacity, thickness, and fill state where applicable. This polymorphic boundary lets the canvas render mixed objects through one loop.",
+          "The canvas observes both drawing-state and palette changes. Either source triggers the same redraw routine: clear the canvas, restore the active background, then render the collection in order. This covers live previews, completed shapes, undo, theme changes, and generated drawings."
         ],
         code: `public void update(Observable source, Object event) {
-    GraphicsContext graphics = getGraphicsContext2D();
+    GraphicsContext g2d = this.getGraphicsContext2D();
     ColourPalette palette = ColourPalette.getInstance();
-    graphics.clearRect(0, 0, getWidth(), getHeight());
-    graphics.setFill(Color.web(palette.getColour("canvas").getHex()));
-    graphics.fillRect(0, 0, getWidth(), getHeight());
+    String canvasColour = palette.getColour("canvas").getHex();
 
-    for (Drawable drawable : model.getDrawings()) {
-        drawable.draw(graphics);
+    g2d.clearRect(0, 0, this.getWidth(), this.getHeight());
+    g2d.setFill(Color.web(canvasColour));
+    g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
+
+    for (Drawable drawable : this.model.getDrawings()) {
+        drawable.draw(g2d);
     }
 }`
       },
@@ -306,7 +325,7 @@ class UndoCommand implements MenuCommand {
         heading: "AI-generated drawings",
         paragraphs: [
           "Prompt generation is an alternate producer of model objects, not a separate rendering system. The app requests structured JSON containing rectangles, ovals, triangles, and polylines, checks the response shape, and converts each entry into the same Drawable hierarchy used by manual tools.",
-          "Generated shapes are scheduled as short JavaFX keyframes, creating a progressive drawing effect while keeping UI updates on the JavaFX application thread. Because generated and manual shapes share the same model, they automatically gain redraw, theme, undo, and export behaviour."
+          "Generated shapes are scheduled as short JavaFX keyframes, creating a progressive drawing effect while keeping UI updates on the JavaFX application thread. Because generated and manual shapes share the same collection, they participate in redraw, undo, palette-aware rendering, and export without a second rendering path."
         ]
       },
       {
@@ -316,9 +335,10 @@ class UndoCommand implements MenuCommand {
         ]
       },
       {
-        heading: "Project summary",
+        heading: "How the pieces fit together",
         paragraphs: [
-          "This project combines MVC, drawing strategies, application commands, model-driven rendering, undo and redo, accessible themes, and prompt-generated artwork in one JavaFX application. Mouse, keyboard, menu, and AI-generated input all flow through the same shared drawing model and rendering pipeline."
+          "A mouse event reaches a controller, which asks the factory for the active drawing strategy. That strategy creates or updates a Drawable in the model. The model then notifies the canvas, which clears and redraws the ordered collection. Menu and keyboard actions reach the same model through Command objects, so actions such as undo and export behave consistently regardless of how they were triggered.",
+          "Each pattern solves a specific problem: Strategy isolates tool behaviour, Factory selects the active tool, Command unifies application actions, Observer keeps views synchronized, and Singleton plus Builder centralize palette configuration. Prompt-generated shapes join the same Drawable collection, so the AI feature extends the existing architecture instead of creating a second canvas system."
         ]
       }
     ],
