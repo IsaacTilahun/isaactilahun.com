@@ -8,7 +8,7 @@
     {% set href = "/projects/" + project.slug + "/" %}
   {% endif %}
 
-  <a class="project-action" href="{{ href }}" {% if href | isExternal %}target="_blank" rel="noopener"{% endif %} aria-label="{{ action.label }} for {{ project.title }}">
+  <a class="project-action project-action--{{ action.type }}" href="{{ href }}" {% if href | isExternal %}target="_blank" rel="noopener"{% endif %} aria-label="{{ action.label }} for {{ project.title }}">
     {% if action.type == "readMore" %}
       <img class="project-action__drawing drawing" src="{{ drawings.readMore }}" alt="" aria-hidden="true" loading="lazy" decoding="async">
     {% elif action.type == "github" %}
@@ -17,9 +17,8 @@
       <img class="project-action__drawing drawing" src="{{ drawings.liveDemo }}" alt="" aria-hidden="true" loading="lazy" decoding="async">
     {% elif action.type == "site" %}
       <img class="project-action__drawing drawing" src="{{ drawings.site }}" alt="" aria-hidden="true" loading="lazy" decoding="async">
-    {% else %}
-      <span>{{ action.label }}</span>
     {% endif %}
+    <span class="project-action__label" aria-hidden="true">{{ action.label }}</span>
   </a>
 {% endmacro %}
 

@@ -152,9 +152,9 @@ if (FD_ISSET(STDIN_FILENO, &fds)) {
 }`
       },
       {
-        heading: "What I would improve",
+        heading: "Project summary",
         paragraphs: [
-          "The current parser intentionally supports a focused shell grammar. The next step would be a lexer and command tree for quoting, redirection, globbing, and full job control. For networking, I would add explicit message framing, modern address resolution, authentication, and tests for partial reads and writes. I already used address, leak, bounds, object-size, and undefined-behaviour sanitizers to catch memory errors during development."
+          "This project brings command parsing, variable expansion, pipelines, background jobs, signal handling, and non-blocking TCP chat into one Unix-style shell. It demonstrates systems programming across process, memory, file descriptor, and socket management in C."
         ]
       }
     ],
@@ -179,10 +179,6 @@ if (FD_ISSET(STDIN_FILENO, &fds)) {
       alt: "ASL learning interface tracking a gray illustrated learner with coily hair while teaching the letter C"
     },
     tech: ["JavaScript", "MediaPipe Hands", "Computer Vision", "HTML/CSS"],
-    details: [
-      "This is the optional longer project description shown on the automatically generated Read More page.",
-      "Add, remove, or reorder paragraphs in this array without changing any templates."
-    ],
     actions: [
       {
         type: "github",
@@ -204,10 +200,6 @@ if (FD_ISSET(STDIN_FILENO, &fds)) {
       alt: "HeyCare voice recording dashboard with live clinical transcription"
     },
     tech: ["React", "TypeScript", "Supabase", "Web Speech API", "OpenRouter"],
-    details: [
-      "This is the optional longer project description shown on the automatically generated Read More page.",
-      "Add, remove, or reorder paragraphs in this array without changing any templates."
-    ],
     actions: [
       {
         type: "github",
@@ -231,7 +223,7 @@ if (FD_ISSET(STDIN_FILENO, &fds)) {
       src: "/assets/images/paint.png",
       alt: "Vibrant digital paint canvas with drawing tools and AI-assisted controls"
     },
-    tech: ["Java", "JavaFX", "MVC", "Design Patterns", "Jackson", "REST APIs"],
+    tech: ["Java", "JavaFX", "MVC", "Design Patterns", "REST APIs"],
     details: [
       {
         heading: "Overview",
@@ -313,22 +305,9 @@ class UndoCommand implements MenuCommand {
       {
         heading: "AI-generated drawings",
         paragraphs: [
-          "Prompt generation is an alternate producer of model objects, not a separate rendering system. The app requests structured JSON containing rectangles, ovals, triangles, and polylines; it checks the response shape, then uses Jackson to parse and convert each entry into the same Drawable hierarchy used by manual tools.",
+          "Prompt generation is an alternate producer of model objects, not a separate rendering system. The app requests structured JSON containing rectangles, ovals, triangles, and polylines, checks the response shape, and converts each entry into the same Drawable hierarchy used by manual tools.",
           "Generated shapes are scheduled as short JavaFX keyframes, creating a progressive drawing effect while keeping UI updates on the JavaFX application thread. Because generated and manual shapes share the same model, they automatically gain redraw, theme, undo, and export behaviour."
-        ],
-        code: `for (JsonNode shapeNode : shapesJSON) {
-    timeline.getKeyFrames().add(new KeyFrame(
-        Duration.millis(delay * index++),
-        event -> {
-            Drawable shape = ConvertJSONShape.getJSONDrawable(shapeNode);
-            drawings.add(shape);
-            setChanged();
-            notifyObservers();
-        }
-    ));
-}
-
-timeline.play();`
+        ]
       },
       {
         heading: "Themes and accessible colour",
@@ -337,10 +316,9 @@ timeline.play();`
         ]
       },
       {
-        heading: "What I would improve",
+        heading: "Project summary",
         paragraphs: [
-          "The model currently combines drawing state with export and prompt orchestration. I would extract those integrations into services, replace the deprecated Observable API with explicit listeners, and represent history as a general command stack so every edit can support undo consistently.",
-          "For a production AI feature, I would place API credentials and provider calls behind a server boundary, add schema validation and cancellation, and surface retries and failures in the interface. I would also add unit tests around geometry, history grouping, JSON conversion, and palette persistence, with UI tests for the highest-value drawing workflows."
+          "This project combines MVC, drawing strategies, application commands, model-driven rendering, undo and redo, accessible themes, and prompt-generated artwork in one JavaFX application. Mouse, keyboard, menu, and AI-generated input all flow through the same shared drawing model and rendering pipeline."
         ]
       }
     ],
@@ -359,10 +337,6 @@ timeline.play();`
       alt: "Terminal views showing gameplay, round setup, and player rankings for Scared of the Dark"
     },
     tech: ["RISC-V Assembly", "Register Management", "Xorshift RNG", "Terminal I/O"],
-    details: [
-      "This is the optional longer project description shown on the automatically generated Read More page.",
-      "Add, remove, or reorder paragraphs in this array without changing any templates."
-    ],
     actions: [
       {
         type: "github",

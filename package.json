@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "eleventy --serve",
     "build": "node scripts/clean-site.js && eleventy",
+    "test": "node tests/theme-storage.test.js",
     "optimize:svg": "svgo --folder assets/drawings --multipass"
   },
   "devDependencies": {

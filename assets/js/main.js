@@ -32,7 +32,11 @@ if (themeToggle) {
     const nextTheme = currentTheme() === "dark" ? "light" : "dark";
     const applyTheme = () => {
       root.dataset.theme = nextTheme;
-      localStorage.setItem("theme", nextTheme);
+      try {
+        localStorage.setItem("theme", nextTheme);
+      } catch {
+        // Theme changes still apply for this page view without storage.
+      }
       updateToggle();
     };
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;

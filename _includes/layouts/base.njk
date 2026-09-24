@@ -9,8 +9,14 @@
     {# Runs before CSS to prevent a flash of the wrong saved theme. #}
     <script>
       (function () {
-        var savedTheme = localStorage.getItem("theme");
-        if (savedTheme) document.documentElement.dataset.theme = savedTheme;
+        try {
+          var savedTheme = localStorage.getItem("theme");
+          if (savedTheme === "light" || savedTheme === "dark") {
+            document.documentElement.dataset.theme = savedTheme;
+          }
+        } catch {
+          // Use the system preference when browser storage is unavailable.
+        }
       })();
     </script>
     <link rel="stylesheet" href="{{ '/assets/css/styles.css' | url }}">
@@ -23,6 +29,9 @@
   <body{% if bodyClass %} class="{{ bodyClass }}"{% endif %}>
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header">
+      <a class="mobile-brand" href="{{ '/' | url }}" aria-label="Isaac Tilahun — home">
+        <img class="mobile-brand__drawing drawing" src="{{ siteContent.drawings.mobileBrand }}" alt="" aria-hidden="true" decoding="async">
+      </a>
       <nav class="site-nav" aria-label="Primary navigation">
         <ul>
           {% for item in siteContent.navigation %}

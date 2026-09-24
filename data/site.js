@@ -46,6 +46,8 @@ module.exports = {
 
   // Central map of hand-drawn assets used by the templates.
   drawings: {
+    mobileBrand: "/assets/drawings/isaac-tilahun.svg",
+    notFound: "/assets/drawings/404-message.svg",
     identity: "/assets/drawings/name-and-bio.svg",
     homeJournal: "/assets/drawings/home-journal/note1.svg",
     expandNote: "/assets/drawings/expand.svg",

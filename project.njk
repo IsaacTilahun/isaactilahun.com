@@ -1,7 +1,7 @@
 ---
 layout: layouts/base.njk
 pagination:
-  data: siteContent.projects
+  data: siteContent.projectDetails
   size: 1
   alias: project
   addAllPagesToCollections: false
@@ -14,7 +14,7 @@ eleventyComputed:
 
 {% from "components/project-card.njk" import projectAction %}
 
-{# Eleventy runs this template once per project because of pagination above. #}
+{# Only projects with a Read More action get a detail page. #}
 <article class="project-detail">
   <div class="project-detail__toolbar">
     <a class="project-detail__back" href="{{ '/projects/' | url }}">
