@@ -20,7 +20,7 @@
       })();
     </script>
     <link rel="stylesheet" href="{{ '/assets/css/styles.css' | url }}">
-    {# Fetch small site pages early; large files such as the resume opt out. #}
+    {# Fetch other site pages early. #}
     {% for item in siteContent.navigation %}
       {% if item.prefetch != false and page.url != item.url %}<link rel="prefetch" href="{{ item.url | url }}" as="document">{% endif %}
     {% endfor %}
