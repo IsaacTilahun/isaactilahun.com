@@ -4,12 +4,12 @@ pagination:
   data: siteContent.projectDetails
   size: 1
   alias: project
-  addAllPagesToCollections: false
+  addAllPagesToCollections: true
 permalink: "/projects/{{ project.slug }}/"
 bodyClass: project-detail-view
 eleventyComputed:
-  title: "{{ project.title }} - Isaac Tilahun"
-  description: "{{ project.description }}"
+  title: "{{ project.title | safe }} - Isaac Tilahun"
+  description: "{{ project.description | safe }}"
 ---
 
 {% from "components/project-card.njk" import projectAction %}

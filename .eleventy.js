@@ -21,6 +21,11 @@ module.exports = function (eleventyConfig) {
   // README is documentation, not a website page. Assets are copied unchanged.
   eleventyConfig.ignores.add("README.md");
   eleventyConfig.addPassthroughCopy("assets");
+  // Browsers and crawlers request these icons from the site root by default.
+  eleventyConfig.addPassthroughCopy({
+    "assets/icons/favicon.ico": "favicon.ico",
+    "assets/icons/apple-touch-icon.png": "apple-touch-icon.png"
+  });
 
   // Templates use this to decide whether a link should open in a new tab.
   eleventyConfig.addFilter("isExternal", function (url) {

@@ -3,8 +3,67 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ title if title else siteContent.site.title }}</title>
-    <meta name="description" content="{{ description if description else siteContent.site.description }}">
+    {% set pageTitle = title if title else siteContent.site.title %}
+    {% set pageDescription = description if description else siteContent.site.description %}
+    {% set canonicalUrl = siteContent.site.url + page.url %}
+    <title>{{ pageTitle }}</title>
+    <meta name="description" content="{{ pageDescription }}">
+    <meta name="author" content="{{ siteContent.author.name }}">
+    {% if noindex %}
+    <meta name="robots" content="noindex">
+    {% else %}
+    <link rel="canonical" href="{{ canonicalUrl }}">
+    {% endif %}
+    <meta property="og:type" content="{{ 'profile' if page.url == '/' else 'website' }}">
+    <meta property="og:site_name" content="{{ siteContent.site.name }}">
+    <meta property="og:title" content="{{ pageTitle }}">
+    <meta property="og:description" content="{{ pageDescription }}">
+    <meta property="og:url" content="{{ canonicalUrl }}">
+    <meta property="og:locale" content="{{ siteContent.site.locale }}">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="{{ pageTitle }}">
+    <meta name="twitter:description" content="{{ pageDescription }}">
+    <link rel="icon" href="/favicon.ico" sizes="48x48">
+    <link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    {% if page.url == '/' %}
+    {# Structured data so search engines connect this site and these profiles to the person "Isaac Tilahun". #}
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "{{ siteContent.site.url }}/#person",
+            "name": {{ siteContent.author.name | dump | safe }},
+            "url": "{{ siteContent.site.url }}/",
+            "jobTitle": {{ siteContent.author.role | dump | safe }},
+            "description": {{ siteContent.site.description | dump | safe }},
+            "affiliation": { "@type": "CollegeOrUniversity", "name": {{ siteContent.author.school | dump | safe }} },
+            "address": { "@type": "PostalAddress", "addressLocality": "Toronto", "addressRegion": "ON", "addressCountry": "CA" },
+            "sameAs": {{ siteContent.author.sameAs | dump | safe }}
+          },
+          {
+            "@type": "WebSite",
+            "@id": "{{ siteContent.site.url }}/#website",
+            "name": {{ siteContent.site.name | dump | safe }},
+            "url": "{{ siteContent.site.url }}/",
+            "inLanguage": "{{ siteContent.site.language }}",
+            "publisher": { "@id": "{{ siteContent.site.url }}/#person" }
+          },
+          {
+            "@type": "ProfilePage",
+            "@id": "{{ siteContent.site.url }}/#profile",
+            "url": "{{ siteContent.site.url }}/",
+            "name": {{ pageTitle | dump | safe }},
+            "isPartOf": { "@id": "{{ siteContent.site.url }}/#website" },
+            "mainEntity": { "@id": "{{ siteContent.site.url }}/#person" }
+          }
+        ]
+      }
+    </script>
+    {% endif %}
     <meta name="color-scheme" content="light dark">
     {# Runs before CSS to prevent a flash of the wrong saved theme. #}
     <script>

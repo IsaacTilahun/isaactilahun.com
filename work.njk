@@ -1,7 +1,7 @@
 ---
 layout: layouts/base.njk
 title: Work - Isaac Tilahun
-description: Experience and work history for Isaac Tilahun.
+description: Isaac Tilahun's work experience as a software developer and programming instructor.
 permalink: /work/
 ---
 
@@ -12,7 +12,16 @@ permalink: /work/
 <div class="work-list" aria-label="Experience list">
   {% for role in siteContent.work %}
     <article class="work-item">
-      <h2><img class="work-item__drawing drawing" src="{{ role.drawing }}" alt="{{ role.title }}"></h2>
+      <div class="work-item__header">
+        <h2><img class="work-item__drawing drawing" src="{{ role.drawing }}" alt="{{ role.title }}"></h2>
+        {% for link in role.links %}
+          {% if link.type == "github" %}
+            <a class="work-item__link" href="{{ link.href }}" target="_blank" rel="noopener" aria-label="{{ role.title }} on GitHub">
+              <img class="work-item__link-drawing drawing" src="{{ siteContent.drawings.githubAction }}" alt="" aria-hidden="true" loading="lazy" decoding="async">
+            </a>
+          {% endif %}
+        {% endfor %}
+      </div>
       {% if role.dates %}<p class="meta">{{ role.dates }}</p>{% endif %}
       {% if role.description %}<p>{{ role.description }}</p>{% endif %}
       {% if role.bullets and role.bullets.length %}

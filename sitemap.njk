@@ -1,0 +1,15 @@
+---
+permalink: /sitemap.xml
+eleventyExcludeFromCollections: true
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{%- for entry in collections.all | sort(false, false, "url") %}
+  {%- if not entry.data.noindex %}
+  <url>
+    <loc>{{ siteContent.site.url }}{{ entry.url }}</loc>
+    <priority>{{ "1.0" if entry.url == "/" else "0.7" }}</priority>
+  </url>
+  {%- endif %}
+{%- endfor %}
+</urlset>

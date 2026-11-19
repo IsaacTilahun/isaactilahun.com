@@ -4,11 +4,11 @@ pagination:
   data: siteContent.workDetails
   size: 1
   alias: role
-  addAllPagesToCollections: false
+  addAllPagesToCollections: true
 permalink: "/work/{{ role.slug }}/"
 eleventyComputed:
-  title: "{{ role.title }} - Isaac Tilahun"
-  description: "{{ role.description or role.title }}"
+  title: "{{ role.title | safe }} - Isaac Tilahun"
+  description: "{{ (role.description or ('Isaac Tilahun - ' + role.title + (' (' + role.dates + ')' if role.dates else '') + '.')) | safe }}"
 ---
 
 <article class="work-detail">

@@ -2,9 +2,9 @@ module.exports = {
   // Browser metadata used by the shared page layout.
   site: {
     name: "Isaac Tilahun",
-    title: "Isaac Tilahun - Portfolio",
+    title: "Isaac Tilahun | Computer Science Student & Software Developer",
     description:
-      "Personal portfolio for Isaac Tilahun: work, projects, and experience.",
+      "Isaac Tilahun is a computer science and statistics student at the University of Toronto and a software developer. See Isaac Tilahun's work experience and projects.",
     url: "https://isaactilahun.com",
     language: "en",
     locale: "en_US"
@@ -21,7 +21,13 @@ module.exports = {
     name: "Isaac Tilahun",
     role: "Software developer",
     location: "Toronto, Canada",
-    email: "isaactilahunc@gmail.com"
+    email: "isaactilahunc@gmail.com",
+    school: "University of Toronto",
+    // Other profiles that belong to the same person (used in search-engine structured data).
+    sameAs: [
+      "https://github.com/IsaacTilahun",
+      "https://www.linkedin.com/in/isaactil/"
+    ]
   },
 
   // Home-page contact links.

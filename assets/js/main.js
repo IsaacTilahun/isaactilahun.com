@@ -123,19 +123,26 @@ if (smiley) {
     y = Math.max(0, Math.min(y, window.innerHeight - smiley.offsetHeight));
   }
 
+  // `translate` is composited on the GPU, so the throw stays smooth on phones
+  // (left/top would force a layout on every animation frame).
   function drawSmiley() {
-    smiley.style.left = `${x}px`;
-    smiley.style.top = `${y}px`;
+    smiley.style.translate = `${x}px ${y}px`;
   }
 
-  function bounce() {
+  let lastFrameTime = 0;
+
+  // Physics is scaled by elapsed time (1 step = one 60 Hz frame), so the throw
+  // feels the same on 60 Hz, 120 Hz, and slower phones.
+  function bounce(now) {
+    const step = lastFrameTime ? Math.min((now - lastFrameTime) / (1000 / 60), 3) : 1;
+    lastFrameTime = now;
     const maxX = window.innerWidth - smiley.offsetWidth;
     const maxY = window.innerHeight - smiley.offsetHeight;
 
-    velocityY += 0.20;
-    velocityX *= 0.995;
-    x += velocityX;
-    y += velocityY;
+    velocityY += 0.20 * step;
+    velocityX *= Math.pow(0.995, step);
+    x += velocityX * step;
+    y += velocityY * step;
 
     if (x <= 0 || x >= maxX) {
       x = Math.max(0, Math.min(x, maxX));
@@ -170,7 +177,6 @@ if (smiley) {
     dragging = true;
 
     smiley.classList.add("is-loose", "is-dragging");
-    smiley.style.position = "fixed";
     smiley.setPointerCapture(event.pointerId);
     drawSmiley();
   });
@@ -202,6 +208,7 @@ if (smiley) {
     if (smiley.hasPointerCapture(event.pointerId)) {
       smiley.releasePointerCapture(event.pointerId);
     }
+    lastFrameTime = 0;
     if (!reduceMotion) animationFrame = requestAnimationFrame(bounce);
   }
 
