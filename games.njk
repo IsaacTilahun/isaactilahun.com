@@ -1,0 +1,61 @@
+---
+layout: layouts/base.njk
+title: Games - Isaac Tilahun
+description: Small browser games and brain tests by Isaac Tilahun. Reaction time, memory, aim, typing and more.
+permalink: /games/
+bodyClass: games-view
+extraCss:
+  - /assets/css/games.css
+---
+
+<header class="page-header games-header">
+  <h1 class="games-title">Games</h1>
+  <p class="page-description">Small games and brain tests for when you have a minute.</p>
+</header>
+
+{#
+  One banner card per game, right on the page. Each takes one of four
+  paper/border styles in turn. Until a hand-drawn banner exists, a card shows
+  the title with a wavy underline plus a few doodles. Clicking a banner opens
+  the game card below (assets/js/games/arcade.js).
+#}
+<ul class="banner-grid" data-game-menu aria-label="Games">
+  {% for game in siteContent.games %}
+    <li>
+      <button class="banner banner--{{ loop.index0 % 4 }}" type="button" data-game="{{ game.slug }}" aria-haspopup="dialog" aria-describedby="blurb-{{ game.slug }}">
+        {% if game.banner %}
+          <img class="banner__art drawing" src="{{ game.banner }}" alt="" decoding="async">
+          <span class="sr-only">{{ game.title }}</span>
+        {% else %}
+          <span class="banner__glyph" aria-hidden="true">{{ game.glyph }}</span>
+          {% for doodle in game.doodles %}<span class="banner__doodle" aria-hidden="true">{{ doodle }}</span>{% endfor %}
+          <span class="banner__title">
+            {{ game.title }}
+            <svg class="banner__underline" viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true"><path d="M2 8 C 30 2, 55 11, 85 6 S 140 2, 170 7 S 192 6, 198 4" /></svg>
+          </span>
+        {% endif %}
+        <span class="banner__blurb" id="blurb-{{ game.slug }}">{{ game.blurb }}</span>
+        <span class="banner__best" data-best-for="{{ game.slug }}"></span>
+      </button>
+    </li>
+  {% endfor %}
+</ul>
+
+{# The game card: grows out of the banner that was clicked. Full screen on phones. #}
+<dialog class="arcade" data-arcade aria-labelledby="arcade-title">
+  <div class="arcade__card" data-arcade-card tabindex="-1">
+    <div class="arcade__bar">
+      <button class="arcade__back arcade__tool" type="button" data-arcade-back aria-label="Back to all games">
+        <span aria-hidden="true">←</span>
+      </button>
+      <h2 class="arcade__title" id="arcade-title" data-arcade-title></h2>
+      <button class="arcade__tool" type="button" data-arcade-sound aria-pressed="false" aria-label="Sound off">
+        <span class="arcade__sound-icon" aria-hidden="true">♪</span>
+      </button>
+    </div>
+    <div class="arcade__stage" data-game-stage tabindex="-1"></div>
+  </div>
+</dialog>
+
+<script type="application/json" id="games-data">{{ siteContent.games | dump | safe }}</script>
+<script type="module" src="{{ '/assets/js/games/arcade.js' | url }}"></script>

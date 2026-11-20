@@ -1,0 +1,92 @@
+/* Squash the Bug. Scoped to the game's stage. */
+.game-stage--bugs .bg { display: flex; min-height: 100%; flex: 1; flex-direction: column; }
+
+/* The field: a bounded patch of ground the bugs run around in. */
+.game-stage--bugs .bg-field {
+  --bg-hit: 48px;
+  position: relative;
+  min-height: 260px;
+  flex: 1;
+  overflow: hidden;
+  border: 1.5px dashed color-mix(in srgb, var(--text) 28%, var(--background)); /* visible in dark mode too */
+  border-radius: var(--g-radius);
+  background: var(--background);
+  cursor: crosshair;
+  touch-action: none; /* taps never scroll or zoom the page */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* The bug: the button is the hit area, the drawing inside is a bit smaller. */
+.game-stage--bugs .bg-bug {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: var(--bg-hit);
+  height: var(--bg-hit);
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  padding: 0;
+  background: transparent;
+  color: var(--text);
+  font: 700 2rem/1 system-ui, sans-serif;
+  cursor: pointer;
+  translate: -50% -50%;
+}
+.game-stage--bugs .bg-bug[hidden] { display: none; }
+.game-stage--bugs .bg-bug__art { pointer-events: none; }
+
+/* Before the clock starts: the centre bug breathes, with a hint beneath it. */
+.game-stage--bugs .bg-field[data-state="ready"] .bg-bug { animation: bg-breathe 1.4s ease-in-out infinite; }
+.game-stage--bugs .bg-start {
+  position: absolute;
+  top: calc(50% + var(--bg-hit) / 2 + 0.4rem);
+  left: 50%;
+  color: var(--muted);
+  font-size: 0.95rem;
+  pointer-events: none;
+  translate: -50% 0;
+  white-space: nowrap;
+}
+
+/* What a tap leaves behind: a splat for a hit, a small red ring for a miss. */
+.game-stage--bugs .bg-splat {
+  position: absolute;
+  color: var(--muted);
+  font: 700 2.2rem/1 system-ui, sans-serif;
+  pointer-events: none;
+  translate: -50% -50%;
+  animation: bg-splat ease-out forwards;
+}
+.game-stage--bugs .bg-miss {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--g-bad);
+  border-radius: 50%;
+  pointer-events: none;
+  translate: -50% -50%;
+  animation: bg-miss ease-out forwards;
+}
+
+@keyframes bg-breathe { 50% { scale: 1.12; } }
+@keyframes bg-splat { from { opacity: 0.9; scale: 0.7; } 30% { scale: 1.1; } to { opacity: 0; scale: 1; } }
+@keyframes bg-miss { from { opacity: 1; scale: 0.6; } to { opacity: 0; scale: 1.6; } }
+@keyframes bg-fade { to { opacity: 0; } }
+
+/* Fingers are bigger than cursors. */
+@media (pointer: coarse) {
+  .game-stage--bugs .bg-field { --bg-hit: 56px; }
+  .game-stage--bugs .bg-bug { font-size: 2.2rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-stage--bugs .bg-field[data-state="ready"] .bg-bug { animation: none; }
+  .game-stage--bugs .bg-splat,
+  .game-stage--bugs .bg-miss { animation-name: bg-fade; }
+}

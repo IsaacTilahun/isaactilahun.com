@@ -14,7 +14,9 @@ module.exports = {
   navigation: [
     { label: "Home", url: "/", drawing: "/assets/drawings/home.svg" },
     { label: "Work", url: "/work/", drawing: "/assets/drawings/work.svg" },
-    { label: "Projects", url: "/projects/", drawing: "/assets/drawings/projects.svg" }
+    { label: "Projects", url: "/projects/", drawing: "/assets/drawings/projects.svg" },
+    // No drawing yet: the nav shows the label as text until one is added.
+    { label: "Games", url: "/games/", drawing: null }
   ],
 
   author: {

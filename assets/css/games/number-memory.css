@@ -1,0 +1,139 @@
+/* Number Memory. Scoped to the game's stage; classes are prefixed nm-. */
+
+.game-stage--number-memory .nm {
+  display: flex;
+  width: 100%;
+  max-width: 40rem;
+  min-height: 100%;
+  flex: 1;
+  flex-direction: column;
+  margin: 0 auto;
+}
+
+/* The panel holds whichever phase's view is showing. It's also the size
+   container the number measures itself against. */
+.game-stage--number-memory .nm-panel {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px dashed var(--project-line);
+  border-radius: var(--g-radius);
+  padding: 1.5rem 1rem;
+  background: var(--background);
+  text-align: center;
+  container-type: inline-size;
+}
+
+.game-stage--number-memory .nm-view {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+}
+
+.game-stage--number-memory .nm-prompt { margin: 0; color: var(--muted); font-size: 1rem; }
+
+/* ---------- Show: the number to remember ---------- */
+
+.game-stage--number-memory .nm-number {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 0.3em;
+  max-width: 100%;
+  margin: 0;
+  font: 700 clamp(1.75rem, calc(100cqi / (var(--nm-length) * 0.72)), 4.5rem)/1.15 var(--g-mono);
+  font-variant-numeric: tabular-nums;
+  animation: nm-rise 280ms var(--g-ease) both;
+}
+.game-stage--number-memory .nm-group { white-space: nowrap; }
+
+/* ---------- Recall: type it back ---------- */
+
+.game-stage--number-memory .nm-form { gap: 0.8rem; }
+.game-stage--number-memory .nm-input {
+  width: min(100%, 22rem);
+  min-height: 64px;
+  border: 1.5px solid var(--text);
+  border-radius: var(--g-radius);
+  padding: 0.4rem 0.75rem;
+  background: var(--paper);
+  color: var(--text);
+  /* Never under 16px, or iOS zooms the page when the field is focused. */
+  font: 700 clamp(1rem, calc(100cqi / (var(--nm-length) * 0.8)), 2.25rem)/1.2 var(--g-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+  text-align: center;
+  caret-color: var(--g-accent);
+  transition: border-color 140ms ease, color 140ms ease;
+}
+.game-stage--number-memory .nm-input:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.game-stage--number-memory .nm-counter { margin: -0.3rem 0 0.2rem; color: var(--muted); font: 600 0.85rem/1 var(--g-mono); }
+
+/* Wrong: the field turns red and shakes for a moment before the result. */
+.game-stage--number-memory [data-phase="wrong"] .nm-input { border-color: var(--g-bad); color: var(--g-bad); }
+.game-stage--number-memory [data-phase="wrong"] .nm-form .g-btn { opacity: 0.4; }
+
+/* ---------- Correct ---------- */
+
+.game-stage--number-memory .nm-mark { color: var(--g-good); font-size: 2.6rem; font-weight: 700; }
+.game-stage--number-memory .nm-verdict { margin: -0.6rem 0 0; font: 700 2rem/1.1 var(--g-mono); }
+.game-stage--number-memory .nm-detail { margin: -0.6rem 0 0.3rem; color: var(--muted); font-weight: 600; }
+
+/* ---------- Result: number vs what was typed ---------- */
+
+.game-stage--number-memory .g-screen--result { width: 100%; }
+
+.game-stage--number-memory .nm-compare {
+  width: 100%;
+  border: 1.5px dashed var(--project-line);
+  border-radius: var(--g-radius);
+  padding: 0.75rem;
+  background: var(--background);
+  container-type: inline-size;
+}
+
+/* Labels on the left, then the digit columns, which wrap under each other
+   (not under the labels) when the number is long. */
+.game-stage--number-memory .nm-compare__grid {
+  display: flex;
+  justify-content: center;
+  gap: 0 0.75em;
+  font: 700 clamp(1.1rem, calc((100cqi - 6rem) / (var(--nm-length) * 0.8)), 2rem)/1 var(--g-mono);
+  font-variant-numeric: tabular-nums;
+}
+.game-stage--number-memory .nm-compare__groups { display: flex; min-width: 0; flex-wrap: wrap; gap: 0.35rem 0.4em; }
+.game-stage--number-memory .nm-pair { display: grid; grid-template-rows: 1.45em 1.45em; }
+.game-stage--number-memory .nm-pair__row { display: flex; align-items: center; justify-content: center; }
+.game-stage--number-memory .nm-pair--labels { flex: none; }
+.game-stage--number-memory .nm-pair--labels .nm-pair__row { justify-content: flex-end; }
+.game-stage--number-memory .nm-label {
+  color: var(--muted);
+  font: 650 0.72rem/1 system-ui, sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.game-stage--number-memory .nm-cell { display: inline-block; width: 1ch; text-align: center; }
+.game-stage--number-memory .nm-cell--wrong {
+  color: var(--g-bad);
+  text-decoration: underline 2px;
+  text-underline-offset: 0.18em;
+}
+
+@keyframes nm-rise { from { opacity: 0; transform: translateY(6px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .game-stage--number-memory .nm-number { animation: none; }
+}
+
+/* Phones: keep the field high up so the on-screen keyboard doesn't cover it. */
+@media (max-width: 640px) {
+  .game-stage--number-memory .nm-panel { padding: 1.25rem 0.75rem; }
+  .game-stage--number-memory .nm[data-phase="recall"] .nm-panel,
+  .game-stage--number-memory .nm[data-phase="wrong"] .nm-panel { justify-content: flex-start; padding-top: 2rem; }
+}

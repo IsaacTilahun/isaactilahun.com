@@ -1,0 +1,42 @@
+/* Reaction Time. Scoped to the game's stage. */
+.game-stage--reaction .rt { display: flex; min-height: 100%; flex: 1; flex-direction: column; }
+
+.game-stage--reaction .rt-pad {
+  display: flex;
+  min-height: 260px;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  border: 1.5px dashed var(--project-line);
+  border-radius: var(--g-radius);
+  padding: 1.5rem;
+  background: var(--background);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease, transform 120ms var(--g-ease);
+  -webkit-user-select: none;
+  user-select: none;
+}
+.game-stage--reaction .rt-pad:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.game-stage--reaction .rt-pad:active { transform: scale(0.99); }
+
+.game-stage--reaction .rt-icon { font-size: 2.6rem; opacity: 0.35; transition: opacity 120ms ease, transform 160ms var(--g-ease); }
+.game-stage--reaction .rt-label { font: 700 clamp(2rem, 7vw, 3rem)/1.1 "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+.game-stage--reaction .rt-hint { min-height: 1.5em; color: var(--muted); font-size: 0.95rem; }
+
+/* Waiting: calm. Go: loud. Early: warning. */
+.game-stage--reaction .rt-pad[data-state="waiting"] { border-style: solid; }
+.game-stage--reaction .rt-pad[data-state="waiting"] .rt-icon { animation: rt-breathe 1.6s ease-in-out infinite; }
+.game-stage--reaction .rt-pad[data-state="go"] { border-color: var(--g-good); background: var(--g-good); color: #fff; }
+.game-stage--reaction .rt-pad[data-state="go"] .rt-icon { opacity: 1; transform: scale(1.25) rotate(-8deg); filter: none; }
+.game-stage--reaction .rt-pad[data-state="early"] { border-color: var(--g-bad); color: var(--g-bad); }
+
+@keyframes rt-breathe { 50% { opacity: 0.6; transform: scale(1.06); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .game-stage--reaction .rt-pad[data-state="waiting"] .rt-icon { animation: none; }
+}

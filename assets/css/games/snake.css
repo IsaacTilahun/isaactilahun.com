@@ -1,0 +1,184 @@
+/* Snake. Scoped to the game's stage. */
+
+/* Layout: stats on top, the board centred in the room left, controls below. */
+.game-stage--snake .sn { display: flex; min-height: 100%; flex: 1; flex-direction: column; }
+.game-stage--snake .sn--touch { touch-action: none; -webkit-user-select: none; user-select: none; }
+
+/* The field takes the leftover height; JS sizes the board to fit inside it. */
+.game-stage--snake .sn-field {
+  display: grid;
+  min-height: 0;
+  flex: 1 1 0;
+  place-items: center;
+  overflow: hidden;
+}
+
+/* ----- Board ----- */
+
+.game-stage--snake .sn-board {
+  position: relative;
+  border: 1.5px solid var(--project-line);
+  border-radius: 6px;
+  background: var(--background);
+  touch-action: none;
+  transition: border-color 160ms ease;
+}
+/* Focused only to keep Space away from stray buttons, so no focus ring. */
+.game-stage--snake .sn-board:focus { outline: none; }
+.game-stage--snake .sn[data-state="crashed"] .sn-board { border-color: var(--g-bad); }
+.game-stage--snake .sn[data-state="won"] .sn-board { border-color: var(--g-good); }
+/* Above the food and eat rings, so the head swallows the bit it slides onto. */
+.game-stage--snake .sn-canvas { position: relative; z-index: 1; display: block; -webkit-touch-callout: none; }
+
+/* Food and eat rings sit on a cell: --x/--y come from JS, --cell from fitBoard(). */
+.game-stage--snake .sn-food,
+.game-stage--snake .sn-ring {
+  position: absolute;
+  top: calc(var(--y) * var(--cell));
+  left: calc(var(--x) * var(--cell));
+  width: var(--cell);
+  height: var(--cell);
+  pointer-events: none;
+}
+
+.game-stage--snake .sn-food {
+  display: grid;
+  place-items: center;
+  color: var(--g-accent);
+  font: 700 calc(var(--cell) * 0.95)/1 var(--g-mono);
+  animation: sn-food-in 180ms var(--g-ease) both, sn-food-pulse 1.4s ease-in-out 180ms infinite;
+}
+.game-stage--snake .sn-food.g-art--img { padding: 8%; object-fit: contain; }
+
+.game-stage--snake .sn-ring {
+  border: 2px solid var(--g-accent);
+  border-radius: 50%;
+  animation: sn-ring 320ms ease-out forwards;
+}
+
+/* ----- Messages on the board ----- */
+
+/* The start note sits high, so the snake in the middle stays in view. */
+.game-stage--snake .sn-start {
+  position: absolute;
+  top: 18%;
+  right: 0;
+  left: 0;
+  display: none;
+  margin: 0;
+  padding: 0 1rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+  pointer-events: none;
+  z-index: 1;
+}
+.game-stage--snake .sn[data-state="waiting"] .sn-start { display: block; animation: sn-fade 240ms ease-out both; }
+
+.game-stage--snake .sn-paused {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  z-index: 1;
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--background) 84%, transparent);
+}
+.game-stage--snake .sn[data-state="paused"] .sn-paused { display: flex; animation: sn-fade 160ms ease-out both; }
+.game-stage--snake .sn-paused__title { margin: 0; font: 700 clamp(1.5rem, 6vw, 2.1rem)/1.15 var(--g-mono); letter-spacing: -0.02em; }
+
+/* ----- Controls ----- */
+
+.game-stage--snake .sn-hint { flex: none; margin: 0.8rem 0 0; color: var(--muted); font-size: 0.85rem; text-align: center; }
+
+/* Touch d-pad: a plus shape with pause in the middle. */
+.game-stage--snake .sn-pad {
+  display: grid;
+  flex: none;
+  grid-template-columns: repeat(3, 56px);
+  grid-template-rows: repeat(3, 56px);
+  grid-template-areas: ". up ." "left pause right" ". down .";
+  gap: 6px;
+  justify-content: center;
+  margin-top: 0.9rem;
+}
+.game-stage--snake .sn-pad__btn {
+  display: grid;
+  place-items: center;
+  border: 1.5px solid var(--project-line);
+  border-radius: 14px;
+  padding: 0;
+  background: var(--paper);
+  color: var(--text);
+  font-family: inherit;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  transition: background-color 120ms ease, transform 120ms var(--g-ease);
+}
+.game-stage--snake .sn-pad__btn:active { background: var(--background); transform: scale(0.92); }
+.game-stage--snake .sn-pad__btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.game-stage--snake .sn-pad__btn--up { grid-area: up; }
+.game-stage--snake .sn-pad__btn--down { grid-area: down; }
+.game-stage--snake .sn-pad__btn--left { grid-area: left; }
+.game-stage--snake .sn-pad__btn--right { grid-area: right; }
+.game-stage--snake .sn-pad__btn--pause { grid-area: pause; border-style: dashed; border-radius: 999px; color: var(--muted); }
+.game-stage--snake .sn-pad__arrow { font-size: 1.5rem; }
+.game-stage--snake .sn-pad__arrow.g-art--img { height: 26px; }
+
+/* Pause icon: two bars, or a play triangle while paused. Drawn in CSS so it stays ink. */
+.game-stage--snake .sn-pause-icon { position: relative; display: block; width: 14px; height: 16px; }
+.game-stage--snake .sn-pause-icon::before,
+.game-stage--snake .sn-pause-icon::after {
+  position: absolute;
+  top: 0;
+  width: 4px;
+  height: 16px;
+  border-radius: 2px;
+  background: currentColor;
+  content: "";
+}
+.game-stage--snake .sn-pause-icon::before { left: 1px; }
+.game-stage--snake .sn-pause-icon::after { right: 1px; }
+.game-stage--snake .sn[data-state="paused"] .sn-pad__btn--pause { border-style: solid; color: var(--text); }
+.game-stage--snake .sn[data-state="paused"] .sn-pause-icon::before {
+  left: 2px;
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 13px solid currentColor;
+  border-radius: 0;
+  background: none;
+}
+.game-stage--snake .sn[data-state="paused"] .sn-pause-icon::after { display: none; }
+
+@keyframes sn-fade { from { opacity: 0; } }
+@keyframes sn-food-in { from { scale: 0.4; opacity: 0; } }
+@keyframes sn-food-pulse { 50% { scale: 1.08; } }
+@keyframes sn-ring { from { scale: 0.7; opacity: 1; } to { scale: 1.9; opacity: 0; } }
+
+/* Tall phones: the board is already as wide as it can be, so give thumbs the spare height. */
+@media (min-height: 780px) {
+  .game-stage--snake .sn-pad { grid-template-columns: repeat(3, 64px); grid-template-rows: repeat(3, 64px); gap: 8px; margin-top: 1.2rem; }
+  .game-stage--snake .sn-pad__arrow { font-size: 1.7rem; }
+}
+
+/* Short screens: a smaller pad so the board keeps its room. */
+@media (max-height: 700px) {
+  .game-stage--snake .sn .g-stats { margin-bottom: 0.5rem; }
+  .game-stage--snake .sn-pad { grid-template-columns: repeat(3, 48px); grid-template-rows: repeat(3, 48px); gap: 5px; margin-top: 0.6rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-stage--snake .sn-food,
+  .game-stage--snake .sn-start,
+  .game-stage--snake .sn-paused { animation: none; }
+  .game-stage--snake .sn-pad__btn { transition: none; }
+}

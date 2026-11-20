@@ -1,0 +1,218 @@
+/* Type Fast. Scoped to the game's stage. */
+
+.game-stage--typing .tf {
+  display: flex;
+  min-height: 100%;
+  flex: 1;
+  flex-direction: column;
+  container-type: inline-size;
+  touch-action: manipulation;
+}
+
+/* The line sits near the top, so a phone keyboard never covers it.
+   Roomy screens centre it in the space under the stats instead. */
+.game-stage--typing .tf-main { display: flex; width: 100%; max-width: 40rem; flex-direction: column; gap: 0.7rem; margin: 0 auto; }
+@media (min-width: 641px) and (min-height: 640px) {
+  .game-stage--typing .tf-main { flex: 1; justify-content: center; padding-bottom: 2.5rem; }
+}
+
+/* ---------- The panel: tag, code, note ---------- */
+
+.game-stage--typing .tf-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+  border: 1.5px dashed var(--project-line);
+  border-radius: var(--g-radius);
+  padding: 0.9rem 1.1rem 1rem;
+  background: var(--background);
+  color: var(--text);
+  cursor: text;
+  transition: border-color 160ms ease;
+}
+.game-stage--typing .tf[data-focus="on"] .tf-panel,
+.game-stage--typing .tf[data-state="done"] .tf-panel { border-style: solid; }
+.game-stage--typing .tf-panel:focus-within { border-color: var(--text); }
+
+.game-stage--typing .tf-tag {
+  border: 1px solid var(--project-line);
+  border-radius: 999px;
+  padding: 0.1rem 0.6rem;
+  color: var(--muted);
+  font: 650 0.76rem/1.5 var(--g-mono);
+  letter-spacing: 0.04em;
+}
+
+/* The note: what the line does. Separated from the code by a pencil line. */
+.game-stage--typing .tf-note {
+  align-self: stretch;
+  margin: 0;
+  border-top: 1px dashed var(--paper-line);
+  padding-top: 0.6rem;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+/* ---------- The line you're typing: one span per character ---------- */
+
+.game-stage--typing .tf-code {
+  min-height: 1.6em;
+  font: 600 clamp(1.05rem, 5.2cqi, 1.55rem)/1.6 var(--g-mono);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.game-stage--typing .tf-char { position: relative; color: var(--muted); opacity: 0.7; transition: color 80ms ease, opacity 80ms ease; }
+.game-stage--typing .tf-char--ok { color: var(--text); opacity: 1; }
+.game-stage--typing .tf-char--bad {
+  color: var(--g-bad);
+  opacity: 1;
+  text-decoration: underline 2px var(--g-bad);
+  text-underline-offset: 0.22em;
+}
+/* A wrong space has no glyph to colour, so tint its box instead. */
+.game-stage--typing .tf-char--bad.tf-char--space { border-radius: 3px; background: color-mix(in srgb, var(--g-bad) 22%, transparent); }
+.game-stage--typing .tf-char--end { display: inline-block; width: 0; height: 1em; }
+
+/* Caret: just before the next character. Still while typing, blinking when you pause. */
+.game-stage--typing .tf-char--next::before {
+  position: absolute;
+  top: 0.18em;
+  bottom: 0.12em;
+  left: -1px;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--g-accent);
+  content: "";
+  animation: tf-blink 1.05s steps(1) infinite;
+}
+.game-stage--typing .tf-char--end.tf-char--next::before { top: 0; bottom: auto; height: 1.1em; }
+.game-stage--typing .tf.is-typing .tf-char--next::before { animation: none; }
+.game-stage--typing .tf[data-focus="off"] .tf-char--next::before { animation: none; opacity: 0.35; }
+.game-stage--typing .tf[data-state="done"] .tf-char--next::before { display: none; }
+
+/* ---------- The real input, and the cover when it isn't focused ---------- */
+
+/* Invisible and laid over the whole panel, so a tap anywhere on it focuses
+   the input (and opens a phone keyboard). 16px stops iOS zooming in. */
+.game-stage--typing .tf-input {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: var(--g-radius);
+  padding: 0;
+  background: transparent;
+  color: transparent;
+  caret-color: transparent;
+  font-size: 16px;
+  opacity: 0;
+  cursor: text;
+  -webkit-tap-highlight-color: transparent;
+}
+.game-stage--typing .tf-input:focus { outline: none; }
+
+.game-stage--typing .tf-cover {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: grid;
+  border-radius: var(--g-radius);
+  place-items: center;
+  background: color-mix(in srgb, var(--background) 72%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms ease;
+}
+.game-stage--typing .tf-cover__label {
+  border: 1.5px solid var(--text);
+  border-radius: 999px;
+  padding: 0.5rem 1.1rem;
+  background: var(--paper);
+  font-size: 0.95rem;
+  font-weight: 650;
+  transform: rotate(-1.5deg);
+}
+/* A short delay so it doesn't flash up while the card is closing. */
+.game-stage--typing .tf[data-focus="off"]:not([data-state="done"]) .tf-cover { opacity: 1; transition-delay: 220ms; }
+
+/* ---------- Hint ---------- */
+
+.game-stage--typing .tf-hint {
+  min-height: 1.5em;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  text-align: center;
+  transition: color 120ms ease;
+}
+.game-stage--typing .tf-hint[data-tone="bad"] { color: var(--g-bad); }
+.game-stage--typing .tf-hint[data-tone="good"] { color: var(--text); font-weight: 600; }
+
+/* ---------- Intro teaser ---------- */
+
+.game-stage--typing .tf-teaser {
+  margin: 0.2rem 0 0.3rem;
+  border: 1.5px dashed var(--project-line);
+  border-radius: var(--g-radius);
+  padding: 0.55rem 1.1rem;
+  background: var(--background);
+  font: 600 1.15rem/1.4 var(--g-mono);
+}
+.game-stage--typing .tf-teaser__prompt { color: var(--muted); }
+.game-stage--typing .tf-teaser__caret {
+  display: inline-block;
+  width: 0.6em;
+  height: 1.05em;
+  margin-left: 0.15em;
+  vertical-align: -0.15em;
+  background: var(--g-accent);
+  animation: tf-blink 1.05s steps(1) infinite;
+}
+
+/* ---------- Result recap: the three lines and what they do ---------- */
+
+.game-stage--typing .tf-recap {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin: 0.1rem 0 0.2rem;
+  border: 1px dashed var(--paper-line);
+  border-radius: var(--g-radius);
+  padding: 0.75rem 0.9rem;
+  list-style: none;
+  text-align: left;
+}
+.game-stage--typing .tf-recap__item { display: flex; align-items: baseline; gap: 0.55rem; }
+.game-stage--typing .tf-recap__check { color: var(--g-good); font-size: 0.9rem; font-weight: 700; }
+.game-stage--typing .tf-recap__check.g-art--img { height: 0.9rem; }
+.game-stage--typing .tf-recap__text { display: flex; min-width: 0; flex-direction: column; gap: 0.1rem; }
+.game-stage--typing .tf-recap__code { font: 600 0.85rem/1.4 var(--g-mono); overflow-wrap: anywhere; }
+.game-stage--typing .tf-recap__note { color: var(--muted); font-size: 0.8rem; line-height: 1.35; }
+
+@keyframes tf-blink { 50% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .game-stage--typing .tf-char--next::before,
+  .game-stage--typing .tf-teaser__caret { animation: none; }
+  .game-stage--typing .tf-char,
+  .game-stage--typing .tf-cover { transition: none; }
+}
+
+/* ---------- Phones ---------- */
+
+@media (max-width: 640px) {
+  .game-stage--typing .tf-panel { gap: 0.5rem; padding: 0.8rem 0.9rem 0.85rem; }
+  .game-stage--typing .tf-note { font-size: 0.9rem; }
+  .game-stage--typing .tf-recap { padding: 0.65rem 0.75rem; }
+}

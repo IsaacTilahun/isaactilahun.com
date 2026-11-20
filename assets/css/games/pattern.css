@@ -1,0 +1,176 @@
+/* Pattern. Scoped to the game's stage. */
+.game-stage--pattern {
+  --pt-ink-soft: color-mix(in srgb, var(--text) 26%, transparent);
+}
+
+/* ---------- Layout ---------- */
+
+/* Stats on top. Below them, the status, board and progress sit together,
+   centred in whatever room is left. */
+.game-stage--pattern .pt {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+/* A size container, so the board can be the biggest square that fits. */
+.game-stage--pattern .pt-area {
+  display: flex;
+  min-height: 300px;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  container-type: size;
+}
+
+.game-stage--pattern .pt-status {
+  min-height: 1.2em;
+  margin: 0 0 1rem;
+  font: 700 clamp(1.25rem, 4.5vw, 1.55rem)/1.2 var(--g-mono);
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+
+.game-stage--pattern .pt-progress {
+  min-height: 1.4em;
+  margin: 0.9rem 0 0;
+  color: var(--muted);
+  font: 600 0.95rem/1.4 var(--g-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Board ---------- */
+
+.game-stage--pattern .pt-board {
+  display: grid;
+  width: min(100cqw, 100cqh - 5.5rem, 420px); /* room left for the status and progress lines */
+  aspect-ratio: 1;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  gap: clamp(8px, 3cqmin, 14px);
+  touch-action: none; /* taps and stray drags never scroll or zoom the page */
+}
+
+.game-stage--pattern .pt-tile {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  border: 1.5px solid var(--pt-ink-soft);
+  border-radius: var(--g-radius);
+  padding: 0;
+  background: var(--background);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 110ms ease,
+    border-color 110ms ease,
+    box-shadow 160ms ease,
+    transform 160ms var(--g-ease);
+  -webkit-user-select: none;
+  user-select: none;
+}
+.game-stage--pattern .pt-tile:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+
+/* Key hints, only where there's a keyboard-and-mouse kind of device. */
+.game-stage--pattern .pt-hint {
+  position: absolute;
+  top: 0.45rem;
+  left: 0.55rem;
+  display: none;
+  color: var(--muted);
+  font: 600 0.7rem/1 var(--g-mono);
+  letter-spacing: 0.04em;
+}
+@media (hover: hover) {
+  .game-stage--pattern .pt-hint { display: block; }
+}
+
+/* Watching: input is locked, so the board stays soft. */
+.game-stage--pattern .pt-board[aria-disabled="true"] .pt-tile { cursor: default; }
+
+/* Your turn: the tiles firm up. */
+.game-stage--pattern .pt-board[data-state="input"] .pt-tile { border-color: var(--text); }
+@media (hover: hover) {
+  .game-stage--pattern .pt-board[data-state="input"] .pt-tile:not(.is-lit):hover { background: var(--paper); box-shadow: 0 6px 18px var(--paper-shadow); }
+}
+
+/* Whole sequence right: a quick green outline. */
+.game-stage--pattern .pt-board[data-state="nice"] .pt-tile { border-color: var(--g-good); }
+
+/* Lit: solid ink and a small lift. Snaps on, fades off. */
+.game-stage--pattern .pt-tile.is-lit {
+  z-index: 1;
+  border-color: var(--text);
+  background: var(--text);
+  box-shadow: 0 10px 24px var(--paper-shadow);
+  transform: scale(1.05);
+  transition-duration: 30ms;
+}
+.game-stage--pattern .pt-tile.is-lit .pt-hint { color: var(--paper); }
+
+/* Game over: the wrong tile goes red, the right one blinks in ink. */
+.game-stage--pattern .pt-tile.is-wrong {
+  border-color: var(--g-bad);
+  background: color-mix(in srgb, var(--g-bad) 14%, var(--background));
+}
+.game-stage--pattern .pt-tile.is-expected {
+  z-index: 1;
+  border-color: var(--text);
+  background: var(--text);
+  outline: 2.5px dashed var(--g-accent);
+  outline-offset: 4px;
+  animation: pt-blink 700ms steps(1, end) 2;
+}
+.game-stage--pattern .pt-tile.is-expected .pt-hint { color: var(--paper); }
+
+/* ---------- Intro mini board ---------- */
+
+.game-stage--pattern .pt-mini {
+  display: grid;
+  grid-template-columns: repeat(3, 24px);
+  grid-template-rows: repeat(3, 24px);
+  gap: 5px;
+  margin: 0.2rem 0 0.3rem;
+}
+.game-stage--pattern .pt-mini__tile {
+  border: 1.5px solid var(--pt-ink-soft);
+  border-radius: 5px;
+}
+
+/* A light hops around four tiles, one after another. (With reduced motion the
+   centre tile just stays lit; see the end of the file.) */
+@media (prefers-reduced-motion: no-preference) {
+  .game-stage--pattern .pt-mini__tile:is(:nth-child(1), :nth-child(5), :nth-child(9), :nth-child(6)) {
+    animation: pt-mini 2.4s steps(1, end) infinite;
+  }
+  .game-stage--pattern .pt-mini__tile:nth-child(5) { animation-delay: 0.6s; }
+  .game-stage--pattern .pt-mini__tile:nth-child(9) { animation-delay: 1.2s; }
+  .game-stage--pattern .pt-mini__tile:nth-child(6) { animation-delay: 1.8s; }
+}
+
+/* ---------- Animations ---------- */
+
+@keyframes pt-blink { 50% { opacity: 0.35; } }
+@keyframes pt-mini {
+  0% { border-color: var(--text); background: var(--text); }
+  25% { border-color: var(--pt-ink-soft); background: transparent; }
+}
+
+/* ---------- Phones ---------- */
+
+@media (max-width: 640px) {
+  .game-stage--pattern .pt-status { margin-bottom: 0.8rem; }
+  .game-stage--pattern .pt-progress { margin-top: 0.7rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-stage--pattern .pt-tile { transition: none; }
+  .game-stage--pattern .pt-tile.is-lit { transform: none; }
+  .game-stage--pattern .pt-tile.is-expected { animation: none; }
+  .game-stage--pattern .pt-mini__tile:nth-child(5) { border-color: var(--text); background: var(--text); }
+}

@@ -23,7 +23,7 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="{{ pageTitle }}">
     <meta name="twitter:description" content="{{ pageDescription }}">
-    <link rel="icon" href="/favicon.ico" sizes="48x48">
+    <link rel="icon" href="/favicon.ico" sizes="32x32">{# 32x32, not "any": lets browsers pick the theme-aware SVG below #}
     <link rel="icon" href="/assets/icons/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="manifest" href="/site.webmanifest">
@@ -79,6 +79,8 @@
       })();
     </script>
     <link rel="stylesheet" href="{{ '/assets/css/styles.css' | url }}">
+    {# Page-specific stylesheets, listed in a page's front matter as `extraCss`. #}
+    {% for href in extraCss %}<link rel="stylesheet" href="{{ href | url }}">{% endfor %}
     {# Fetch other site pages early. #}
     {% for item in siteContent.navigation %}
       {% if item.prefetch != false and page.url != item.url %}<link rel="prefetch" href="{{ item.url | url }}" as="document">{% endif %}
@@ -96,7 +98,12 @@
           {% for item in siteContent.navigation %}
             <li>
               <a href="{{ item.url | url }}" {% if page.url == item.url %}aria-current="page"{% endif %}>
+                {% if item.drawing %}
                 <img class="nav-drawing drawing" src="{{ item.drawing }}" alt="" aria-hidden="true" decoding="async">
+                {% else %}
+                {# Text stand-in until a hand-drawn label exists for this link. #}
+                <span class="nav-text" aria-hidden="true">{{ item.label }}</span>
+                {% endif %}
                 {# Only the current route receives the hand-drawn underline. #}
                 {% if page.url == item.url %}<img class="nav-underline drawing" src="{{ siteContent.drawings.headerUnderline }}" alt="" aria-hidden="true" decoding="async">{% endif %}
                 <span class="sr-only">{{ item.label }}</span>

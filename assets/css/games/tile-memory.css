@@ -1,0 +1,113 @@
+/* Tile Memory. Scoped to the game's stage. */
+
+/* ----- Layout: stats on top, the board and status centred in the room below ----- */
+
+.game-stage--tile-memory .tm { display: flex; min-height: 0; flex: 1; flex-direction: column; }
+
+/* A size container, so the board can be the largest square that still leaves
+   room for the status line (--tm-status-room). */
+.game-stage--tile-memory .tm-area {
+  --tm-status-room: 3.6rem;
+  display: flex;
+  min-height: 240px;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  container-type: size;
+}
+
+.game-stage--tile-memory .tm-status {
+  min-height: 2.8em;
+  margin: 0.75rem 0 0;
+  max-width: 24rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.4;
+  text-align: center;
+  text-wrap: balance;
+}
+
+/* ----- Board ----- */
+
+.game-stage--tile-memory .tm-board {
+  --tm-size: 3;
+  --tm-gap: clamp(4px, calc(30px / var(--tm-size)), 10px);
+  display: grid;
+  width: min(100cqw, 100cqh - var(--tm-status-room), 32rem);
+  flex: none;
+  aspect-ratio: 1;
+  grid-template-columns: repeat(var(--tm-size), minmax(0, 1fr));
+  gap: var(--tm-gap);
+  border-radius: var(--g-radius);
+  touch-action: none; /* taps never scroll or zoom the page */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ----- Tiles ----- */
+
+.game-stage--tile-memory .tm-tile {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  place-items: center;
+  /* Mixed from the ink, so the grid lines read clearly in dark mode too. */
+  border: 1.5px solid color-mix(in srgb, var(--text) 28%, var(--background));
+  border-radius: clamp(4px, calc(36px / var(--tm-size)), 12px);
+  padding: 0;
+  background: var(--background);
+  color: var(--text);
+  font: inherit;
+  cursor: default;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 140ms ease, border-color 140ms ease, transform 140ms var(--g-ease);
+}
+.game-stage--tile-memory .tm-tile:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* Only tappable while recalling. */
+.game-stage--tile-memory .tm-board[data-phase="recall"] .tm-tile[data-state=""] { cursor: pointer; }
+.game-stage--tile-memory .tm-board[data-phase="recall"] .tm-tile:active { transform: scale(0.94); }
+@media (hover: hover) {
+  .game-stage--tile-memory .tm-board[data-phase="recall"] .tm-tile[data-state=""]:hover { border-color: var(--text); }
+}
+
+/* Lit (during the flash) and found (tapped correctly) look the same: solid ink. */
+.game-stage--tile-memory .tm-tile[data-state="lit"],
+.game-stage--tile-memory .tm-tile[data-state="found"] {
+  border-color: var(--text);
+  background: var(--text);
+}
+
+/* Level cleared: the found tiles turn green for a moment. */
+.game-stage--tile-memory .tm-board[data-phase="cleared"] .tm-tile[data-state="found"] {
+  border-color: var(--g-good);
+  background: var(--g-good);
+}
+
+/* A wrong tap keeps its X; after a lost life, the tiles you forgot show up dashed. */
+.game-stage--tile-memory .tm-tile[data-state="wrong"] { border-color: var(--g-bad); color: var(--g-bad); }
+.game-stage--tile-memory .tm-tile[data-state="forgotten"] {
+  border: 2px dashed var(--g-bad);
+  background: color-mix(in srgb, var(--g-bad) 14%, transparent);
+}
+
+.game-stage--tile-memory .tm-cross {
+  visibility: hidden;
+  font-size: clamp(1rem, calc(6rem / var(--tm-size)), 2.2rem);
+  font-weight: 700;
+  scale: 0.4;
+  transition: scale 160ms var(--g-ease);
+}
+.game-stage--tile-memory .tm-tile[data-state="wrong"] .tm-cross { visibility: visible; scale: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .game-stage--tile-memory .tm-tile,
+  .game-stage--tile-memory .tm-cross { transition: none; }
+}
+
+/* ----- Phones ----- */
+
+@media (max-width: 640px) {
+  .game-stage--tile-memory .tm-status { margin-top: 0.6rem; font-size: 0.9rem; }
+}
