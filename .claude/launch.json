@@ -6,6 +6,13 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": ["eleventy", "--serve", "--port=8080"],
       "port": 8080
+    },
+    {
+      "name": "qa",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["eleventy", "--serve", "--port=8090", "--output=C:/Users/izee3/AppData/Local/Temp/claude/48027a0dcdc82365/385a1c22-4d9b-402f-8c4b-43bef8d5c600/scratchpad/qa-site"],
+      "port": 8090,
+      "autoPort": false
     }
   ]
 }

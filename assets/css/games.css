@@ -1,0 +1,446 @@
+/* Games page: the arcade card (menu + stage) and the shared game kit (g-*).
+   Colours come from the site tokens in styles.css, so light and dark mode
+   both just work. Each game adds its own rules in assets/css/games/<slug>.css,
+   scoped under .game-stage--<slug>. */
+
+/* ---------- Tokens ---------- */
+
+:root {
+  --g-accent: var(--focus);
+  --g-good: #2f8f5b;
+  --g-bad: #c2453b;
+  --g-radius: 10px;
+  --g-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --g-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --g-hand: "Segoe Print", "Bradley Hand", "Chalkboard SE", "Comic Sans MS", cursive;
+}
+:root[data-theme="dark"] { --g-good: #5fcf8f; --g-bad: #ff7a6e; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) { --g-good: #5fcf8f; --g-bad: #ff7a6e; }
+}
+
+/* Text stand-in for nav links that don't have a drawing yet (see base.njk). */
+.nav-text {
+  display: block;
+  font-family: var(--g-hand);
+  font-size: 1.15rem;
+  line-height: 30px;
+  white-space: nowrap;
+}
+
+/* ---------- Page ---------- */
+
+.games-view main { width: min(1060px, calc(100% - 40px)); }
+.games-header { margin-bottom: 2.25rem; }
+.games-title {
+  margin: 0 0 0.5rem;
+  font-family: var(--g-hand);
+  font-size: clamp(2.4rem, 7vw, 3.2rem);
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+/* ---------- Banner cards (the menu, right on the page) ---------- */
+
+/* One wide, title-first card per game, like a shelf of game covers. Four
+   paper/border styles take turns (banner--0 … banner--3) so the shelf feels
+   hand-assembled rather than printed. */
+.banner-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.banner {
+  --lean: -0.6deg;
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-height: 150px;
+  aspect-ratio: 5 / 2;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2.5px solid var(--text);
+  border-radius: 18px;
+  padding: 1rem 1.5rem;
+  overflow: hidden;
+  background: var(--paper);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+  isolation: isolate;
+  transition: transform 220ms var(--g-ease), box-shadow 220ms ease, background-color 240ms ease;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Plain paper, heavy ink. */
+.banner--0 { border-width: 3px; }
+
+/* Dotted notebook paper, dashed edge. */
+.banner--1 {
+  --lean: 0.5deg;
+  border-style: dashed;
+  background-image: radial-gradient(var(--project-line) 1px, transparent 1.6px);
+  background-size: 16px 16px;
+}
+
+/* Lined paper with a margin, double edge. */
+.banner--2 {
+  --lean: -0.4deg;
+  border: 5px double var(--text);
+  background-image:
+    linear-gradient(90deg, transparent 2.2rem, color-mix(in srgb, var(--g-bad) 35%, transparent) 2.2rem 2.3rem, transparent 2.3rem),
+    repeating-linear-gradient(transparent 0 25px, var(--paper-line) 25px 26px);
+}
+
+/* Graph paper, a sticker-style offset shadow. */
+.banner--3 {
+  --lean: 0.7deg;
+  border-width: 2px;
+  box-shadow: 5px 5px 0 var(--text);
+  background-image:
+    linear-gradient(var(--paper-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--paper-line) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+@media (hover: hover) {
+  .banner:hover { transform: translateY(-3px) rotate(var(--lean)); }
+  .banner--3:hover { box-shadow: 8px 8px 0 var(--text); }
+  .banner:hover .banner__doodle { translate: 0 -3px; }
+  .banner:hover .banner__glyph { rotate: -4deg; }
+}
+.banner:active { transform: scale(0.98); transition-duration: 90ms; }
+.banner:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
+
+.banner__title {
+  position: relative;
+  z-index: 1;
+  font-family: var(--g-hand);
+  font-size: clamp(1.6rem, 3.3vw, 2.3rem);
+  font-weight: 600;
+  line-height: 1.1;
+  text-align: center;
+}
+/* A wavy hand-drawn underline in the accent colour. */
+.banner__underline {
+  position: absolute;
+  bottom: -0.32em;
+  left: -4%;
+  width: 108%;
+  height: 0.42em;
+  fill: none;
+  stroke: var(--g-accent);
+  stroke-linecap: round;
+  stroke-width: 2.5;
+  vector-effect: non-scaling-stroke;
+}
+.banner__blurb {
+  position: relative;
+  z-index: 1;
+  max-width: 88%;
+  margin-top: 0.75rem;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.35;
+  text-align: center;
+}
+
+/* The big faint doodle, cropped off the right edge, and the little ones around it. */
+.banner__glyph {
+  position: absolute;
+  top: 50%;
+  right: -0.15em;
+  z-index: 0;
+  font: 700 4.6rem/1 var(--g-mono);
+  letter-spacing: -0.06em;
+  opacity: 0.1;
+  transform: translateY(-50%) rotate(-10deg);
+  transition: rotate 300ms var(--g-ease);
+  white-space: nowrap;
+}
+.banner__doodle {
+  position: absolute;
+  z-index: 0;
+  color: var(--muted);
+  font: 600 1rem/1 var(--g-mono);
+  opacity: 0.6;
+  transition: translate 300ms var(--g-ease);
+  white-space: nowrap;
+}
+.banner__doodle:nth-of-type(2) { top: 14%; left: 7%; rotate: -12deg; }
+.banner__doodle:nth-of-type(3) { bottom: 14%; left: 11%; rotate: 8deg; font-size: 0.85rem; }
+.banner__doodle:nth-of-type(4) { bottom: 16%; right: 22%; rotate: -6deg; }
+
+.banner__best {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.8rem;
+  z-index: 1;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+  padding: 0.1rem 0.55rem;
+  background: var(--paper);
+  color: var(--g-accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  rotate: 3deg;
+}
+.banner__best:empty { display: none; }
+
+/* A finished hand-drawn banner fills the card. */
+.banner__art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+/* ---------- The game card (opens over the page) ---------- */
+
+.arcade {
+  width: min(820px, calc(100% - 32px));
+  max-width: none;
+  height: min(760px, calc(100dvh - 40px));
+  max-height: none;
+  border: 0;
+  padding: 0;
+  overflow: visible;
+  background: transparent;
+  color: var(--text);
+}
+.arcade:focus { outline: none; }
+.arcade::backdrop {
+  background: color-mix(in srgb, var(--background) 70%, transparent);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  animation: arcade-backdrop-in 260ms ease-out;
+}
+.arcade.is-leaving::backdrop { animation: arcade-backdrop-out 240ms ease-in forwards; }
+@keyframes arcade-backdrop-in { from { opacity: 0; } }
+@keyframes arcade-backdrop-out { to { opacity: 0; } }
+html.arcade-open { overflow: hidden; }
+
+.arcade__card {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  border: 2.5px solid var(--text);
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--paper);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+}
+.arcade__card:focus { outline: none; }
+
+.arcade__bar {
+  display: flex;
+  flex: none;
+  min-height: 60px;
+  align-items: center;
+  gap: 0.25rem;
+  border-bottom: 1px dashed var(--paper-line);
+  padding: 0.5rem 0.6rem;
+}
+.arcade__title { flex: 1; min-width: 0; margin: 0; overflow: hidden; font-size: 1.15rem; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
+
+.arcade__tool {
+  display: grid;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 999px;
+  place-items: center;
+  background: transparent;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease, transform 160ms var(--g-ease);
+}
+.arcade__tool.is-on, .arcade__back { color: var(--text); }
+@media (hover: hover) { .arcade__tool:hover { background: var(--background); color: var(--text); } }
+.arcade__tool:active { transform: scale(0.9); }
+.arcade__tool:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* Sound off: the note gets a strike through it. */
+.arcade__sound-icon { position: relative; display: inline-block; }
+.arcade__tool:not(.is-on) .arcade__sound-icon::after {
+  position: absolute;
+  top: 50%;
+  left: -3px;
+  width: calc(100% + 6px);
+  height: 1.5px;
+  border-radius: 2px;
+  background: currentColor;
+  content: "";
+  transform: rotate(-35deg);
+}
+
+/* Stage: where a game renders. */
+.arcade__stage {
+  position: relative;
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  padding: clamp(1rem, 3vw, 1.75rem);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.arcade__stage:focus { outline: none; }
+.arcade__error { margin: auto; color: var(--muted); text-align: center; }
+
+/* Phones (and phones held sideways): banners stack, and the game card fills the screen. */
+@media (max-width: 640px) {
+  .games-view main { width: calc(100% - 28px); }
+  .games-header { margin-bottom: 1.5rem; }
+  .banner-grid { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+  .banner { min-height: 128px; padding: 0.8rem 1.1rem; border-radius: 16px; }
+  .banner__title { font-size: clamp(1.5rem, 7.2vw, 1.9rem); }
+  .banner__blurb { margin-top: 0.6rem; font-size: 0.78rem; }
+  .banner__glyph { font-size: 3.6rem; }
+}
+@media (max-width: 640px), (max-height: 520px) {
+  .arcade {
+    width: calc(100% - 16px);
+    height: calc(100dvh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  }
+  .arcade__card { border-width: 2px; border-radius: 16px; }
+  .arcade__bar { min-height: 54px; }
+  .arcade__title { font-size: 1.05rem; }
+  .arcade__stage { padding: 0.9rem; }
+}
+
+/* ---------- Shared game kit ---------- */
+
+.g-screen {
+  display: flex;
+  margin: auto;
+  max-width: 30rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1rem 0;
+  text-align: center;
+  animation: g-rise 320ms var(--g-ease) both;
+}
+.g-screen__how { margin: 0; color: var(--muted); font-size: 1.02rem; text-wrap: balance; }
+.g-screen__best { margin: 0; color: var(--muted); font-size: 0.85rem; font-weight: 600; }
+.g-screen__big { margin: 0; font: 700 clamp(3rem, 12vw, 4.5rem)/1 var(--g-mono); letter-spacing: -0.03em; }
+.g-screen__caption { margin: -0.4rem 0 0; color: var(--muted); font-weight: 600; }
+.g-screen__message { margin: 0; text-wrap: balance; }
+.g-badge {
+  margin: 0;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+  padding: 0.15rem 0.75rem;
+  color: var(--g-accent);
+  font-size: 0.85rem;
+  font-weight: 700;
+  transform: rotate(-3deg);
+  animation: g-badge-in 420ms var(--g-ease) both;
+}
+
+.g-btn {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border: 1.5px solid var(--text);
+  border-radius: 999px;
+  padding: 0.5rem 1.3rem;
+  background: var(--text);
+  color: var(--paper);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 140ms var(--g-ease), background-color 160ms ease, color 160ms ease, opacity 160ms ease;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.g-btn--ghost { background: transparent; color: var(--text); }
+.g-btn--big { min-height: 52px; padding: 0.6rem 2rem; font-size: 1.1rem; }
+@media (hover: hover) {
+  .g-btn:hover { transform: translateY(-1px) rotate(-0.6deg); }
+  .g-btn--ghost:hover { background: var(--background); }
+}
+.g-btn:active { transform: scale(0.96); transition-duration: 70ms; }
+.g-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.g-btn:disabled { opacity: 0.4; cursor: default; transform: none; }
+
+.g-stats {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.75rem;
+  margin: 0 0 1rem;
+}
+.g-stat { display: flex; min-width: 4rem; flex-direction: column; align-items: center; }
+.g-stat__label { color: var(--muted); font-size: 0.72rem; font-weight: 650; letter-spacing: 0.06em; text-transform: uppercase; }
+.g-stat__value { margin: 0; font: 700 1.35rem/1.3 var(--g-mono); font-variant-numeric: tabular-nums; }
+
+/* streakFlame(): the number stays centred under its label, the flame sits just after it. */
+.g-stat--flame {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  justify-items: center;
+}
+.g-stat--flame .g-stat__label { grid-column: 1 / -1; }
+.g-stat--flame .g-stat__value { grid-column: 2; }
+.g-flame {
+  grid-column: 3;
+  justify-self: start;
+  margin-left: 0.15rem;
+  font-size: 1.15rem;
+  opacity: 0.22;
+  transform-origin: 50% 90%;
+  transition: opacity 200ms ease, color 200ms ease;
+}
+.g-flame__icon {
+  display: block;
+  width: 1em;
+  height: 1em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.g-stat[data-heat="lit"] .g-flame { opacity: 0.9; }
+.g-stat[data-heat="hot"] .g-flame { opacity: 1; color: var(--g-accent); animation: g-flicker 1.4s ease-in-out infinite; }
+
+/* countdownBar(): drains from full to empty. */
+.g-countdown { width: min(100%, 18rem); height: 4px; margin: 0 auto; border-radius: 999px; overflow: hidden; background: var(--paper-line); }
+.g-countdown__fill { display: block; height: 100%; border-radius: inherit; background: var(--text); transform-origin: left center; }
+
+.g-art { display: inline-block; flex: none; line-height: 1; }
+.g-art--img { width: auto; height: 1em; }
+
+/* statBar().set() bumps a value to draw the eye. */
+.g-bump { animation: g-bump 260ms var(--g-ease); }
+
+@keyframes g-rise { from { opacity: 0; transform: translateY(10px); } }
+@keyframes g-badge-in { 0% { transform: scale(0.6) rotate(-3deg); opacity: 0; } 70% { transform: scale(1.08) rotate(-3deg); opacity: 1; } 100% { transform: scale(1) rotate(-3deg); } }
+@keyframes g-bump { 40% { transform: scale(1.25); } }
+@keyframes g-flicker { 0%, 100% { rotate: -4deg; scale: 1; } 50% { rotate: 4deg; scale: 1.08; } }
+
+/* Phones: one shared rhythm between the stats and the play area. */
+@media (max-width: 640px) {
+  .g-stats { gap: 0.4rem 1.4rem; margin-bottom: 0.75rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .g-screen, .g-badge, .g-bump, .g-stat[data-heat="hot"] .g-flame { animation: none; }
+  .banner, .banner__doodle, .banner__glyph, .g-btn, .g-flame { transition: none; }
+}

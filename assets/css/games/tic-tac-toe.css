@@ -1,0 +1,242 @@
+/* Tic-Tac-Toe. Scoped to the game's stage. */
+
+/* ---------- Layout ---------- */
+
+/* .ttt is a size container, so the board can be the biggest square that
+   still leaves room for the stats above it and the status below. */
+.game-stage--tic-tac-toe .ttt {
+  display: flex;
+  min-height: 100%;
+  flex: 1;
+  flex-direction: column;
+  container-type: size;
+}
+.game-stage--tic-tac-toe .ttt-body {
+  display: flex;
+  min-height: 100%;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+}
+.game-stage--tic-tac-toe .ttt-play {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  margin: auto 0; /* centred in the space under the stats */
+}
+
+/* ---------- Stats ---------- */
+
+/* Four stats need a little less air to fit one line on a phone. */
+.game-stage--tic-tac-toe .g-stats { gap: 0.5rem 1.4rem; }
+.game-stage--tic-tac-toe .g-stat { min-width: 3.4rem; }
+
+/* ---------- Board ---------- */
+
+.game-stage--tic-tac-toe .ttt-board {
+  position: relative;
+  flex: none;
+  /* 11.75rem = the stat bar plus the status/Next game foot below the board. */
+  width: clamp(220px, min(100cqw, 100cqh - 11.75rem), 440px);
+  aspect-ratio: 1;
+  color: var(--text);
+}
+
+/* The grid lines and the win strike are SVG layers over and under the squares. */
+.game-stage--tic-tac-toe .ttt-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.game-stage--tic-tac-toe .ttt-lines--strike { z-index: 2; }
+.game-stage--tic-tac-toe .is-won .ttt-lines--strike { color: var(--g-good); }
+.game-stage--tic-tac-toe .is-lost .ttt-lines--strike { color: var(--g-bad); }
+
+.game-stage--tic-tac-toe .ttt-squares {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 6px;
+  padding: 3px;
+}
+
+/* ---------- Squares ---------- */
+
+.game-stage--tic-tac-toe .ttt-square {
+  position: relative;
+  display: grid;
+  min-width: 44px;
+  min-height: 44px;
+  place-items: center;
+  border: 0;
+  border-radius: 14px;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background-color 140ms ease, transform 140ms var(--g-ease);
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.game-stage--tic-tac-toe .ttt-square > * { grid-area: 1 / 1; } /* mark and key hint share the square */
+.game-stage--tic-tac-toe .ttt-square:focus-visible { outline: 2px solid var(--focus); outline-offset: -4px; }
+
+/* Only an open square on your turn reacts to the pointer. */
+@media (hover: hover) {
+  .game-stage--tic-tac-toe .ttt-board:not(.is-thinking, .is-done) .ttt-square:not(.is-filled):hover { background: var(--background); }
+}
+.game-stage--tic-tac-toe .ttt-board:not(.is-thinking, .is-done) .ttt-square:not(.is-filled):active { transform: scale(0.94); transition-duration: 70ms; }
+.game-stage--tic-tac-toe .ttt-square.is-filled,
+.game-stage--tic-tac-toe .is-done .ttt-square { cursor: default; }
+.game-stage--tic-tac-toe .is-thinking .ttt-square:not(.is-filled) { cursor: progress; }
+
+/* Faint numpad digits for keyboard players (desktop only). */
+.game-stage--tic-tac-toe .ttt-key {
+  align-self: start;
+  justify-self: start;
+  margin: 0.45rem 0 0 0.6rem;
+  color: var(--muted);
+  font: 600 0.72rem/1 var(--g-mono);
+  opacity: 0.6;
+  transition: opacity 160ms ease;
+}
+.game-stage--tic-tac-toe .is-filled .ttt-key,
+.game-stage--tic-tac-toe .is-done .ttt-key { opacity: 0; }
+
+/* ---------- Marks ---------- */
+
+.game-stage--tic-tac-toe .ttt-mark {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  pointer-events: none;
+  transition: opacity 260ms ease;
+}
+.game-stage--tic-tac-toe .ttt-svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.game-stage--tic-tac-toe .ttt-drawing { width: 64%; height: 64%; object-fit: contain; }
+
+/* Every stroke has pathLength="1": the dash starts fully offset (hidden) and
+   slides to 0. The gap is a hair longer than the path so no cap shows early. */
+.game-stage--tic-tac-toe .ttt-stroke {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1 1.1;
+  stroke-dashoffset: 1.05;
+  animation: ttt-draw 200ms cubic-bezier(0.45, 0, 0.3, 1) forwards;
+}
+.game-stage--tic-tac-toe .ttt-stroke--grid { stroke-width: 3; opacity: 0.88; animation-duration: 280ms; }
+.game-stage--tic-tac-toe .ttt-stroke--x1,
+.game-stage--tic-tac-toe .ttt-stroke--x2 { stroke-width: 7.5; animation-duration: 150ms; }
+.game-stage--tic-tac-toe .ttt-stroke--x2 { animation-delay: 120ms; } /* second stroke after the first */
+.game-stage--tic-tac-toe .ttt-stroke--o { stroke-width: 7; animation-duration: 300ms; }
+.game-stage--tic-tac-toe .ttt-stroke--strike { stroke-width: 6.5; animation-duration: 340ms; animation-delay: 220ms; }
+
+/* Game over: the winning three stay bold, everything else steps back. */
+.game-stage--tic-tac-toe .is-done .ttt-square.is-filled:not(.is-win) .ttt-mark { opacity: 0.28; }
+.game-stage--tic-tac-toe .is-draw .ttt-square.is-filled .ttt-mark { opacity: 0.5; }
+.game-stage--tic-tac-toe .is-done .ttt-square.is-win .ttt-mark { animation: ttt-win 420ms var(--g-ease) 420ms both; }
+
+/* ---------- Status and Next game ---------- */
+
+/* Fixed height, so the board doesn't jump when the button appears. */
+.game-stage--tic-tac-toe .ttt-foot {
+  display: flex;
+  min-height: 6.25rem;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+  padding-top: 0.85rem;
+}
+.game-stage--tic-tac-toe .ttt-status {
+  min-height: 1.6em;
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 650;
+  line-height: 1.5;
+  text-align: center;
+}
+.game-stage--tic-tac-toe .ttt-status[data-mood="good"] { color: var(--g-good); }
+.game-stage--tic-tac-toe .ttt-status[data-mood="bad"] { color: var(--g-bad); }
+
+.game-stage--tic-tac-toe .ttt-next { min-width: 9.5rem; animation: g-rise 260ms var(--g-ease) both; }
+.game-stage--tic-tac-toe .ttt-next[hidden] { display: none; }
+
+.game-stage--tic-tac-toe .ttt-dots { display: inline-flex; gap: 3px; margin-left: 3px; }
+.game-stage--tic-tac-toe .ttt-dots i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: ttt-dot 900ms ease-in-out infinite;
+}
+.game-stage--tic-tac-toe .ttt-dots i:nth-child(2) { animation-delay: 150ms; }
+.game-stage--tic-tac-toe .ttt-dots i:nth-child(3) { animation-delay: 300ms; }
+
+/* ---------- Short, wide stage ---------- */
+
+/* Phone in landscape or a short laptop window: board on the left, stats and
+   status on the right, so the board can use the full height. */
+@container (max-height: 36rem) and (min-width: 34rem) {
+  .game-stage--tic-tac-toe .ttt-body {
+    display: grid;
+    height: 100%;
+    grid-template-columns: auto minmax(0, 15rem);
+    grid-template-rows: 1fr 1fr;
+    justify-content: center;
+    align-items: center;
+    column-gap: clamp(1.25rem, 4cqw, 2.5rem);
+  }
+  .game-stage--tic-tac-toe .ttt-play { display: contents; }
+  .game-stage--tic-tac-toe .ttt-board {
+    grid-column: 1;
+    grid-row: 1 / -1;
+    width: clamp(180px, min(100cqh, 100cqw - 17.5rem), 440px);
+  }
+  .game-stage--tic-tac-toe .g-stats {
+    display: grid;
+    grid-column: 2;
+    grid-row: 1;
+    grid-template-columns: repeat(2, auto);
+    justify-content: center;
+    align-self: end;
+    gap: 0.6rem 1.5rem;
+    margin: 0;
+  }
+  .game-stage--tic-tac-toe .ttt-foot { grid-column: 2; grid-row: 2; align-self: start; min-height: 0; padding-top: 1rem; }
+}
+
+/* ---------- Motion ---------- */
+
+@keyframes ttt-draw { to { stroke-dashoffset: 0; } }
+@keyframes ttt-win { 50% { transform: scale(1.12) rotate(-3deg); } }
+@keyframes ttt-dot { 0%, 60%, 100% { opacity: 0.25; transform: none; } 30% { opacity: 1; transform: translateY(-3px); } }
+
+/* Reduced motion: strokes appear fully drawn, nothing bobs or flickers. */
+@media (prefers-reduced-motion: reduce) {
+  .game-stage--tic-tac-toe .ttt-stroke { animation: none; stroke-dashoffset: 0; }
+  .game-stage--tic-tac-toe .ttt-mark,
+  .game-stage--tic-tac-toe .ttt-next,
+  .game-stage--tic-tac-toe .ttt-dots i { animation: none !important; }
+  .game-stage--tic-tac-toe .ttt-square { transition: none; }
+}
+
+/* ---------- Phones ---------- */
+
+@media (max-width: 640px) {
+  .game-stage--tic-tac-toe .g-stats { column-gap: 1rem; }
+  .game-stage--tic-tac-toe .g-stat__label { font-size: 0.68rem; }
+}

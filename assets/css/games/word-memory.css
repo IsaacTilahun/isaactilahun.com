@@ -1,0 +1,99 @@
+/* Word Memory. Scoped to the game's stage. */
+.game-stage--word-memory .wm {
+  display: flex;
+  min-height: 100%;
+  width: 100%;
+  max-width: 36rem;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0 auto;
+}
+.game-stage--word-memory .wm .g-stats { margin-bottom: 0.25rem; }
+
+/* The word card: one word, big and centred. */
+.game-stage--word-memory .wm-card {
+  position: relative;
+  display: flex;
+  min-height: 220px;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px dashed var(--project-line);
+  border-radius: var(--g-radius);
+  padding: 1.5rem 1rem;
+  background: var(--background);
+  transition: border-color 160ms ease;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.game-stage--word-memory .wm-card[data-result="bad"] { border-style: solid; border-color: var(--g-bad); }
+
+.game-stage--word-memory .wm-word {
+  margin: 0;
+  font-size: clamp(2.5rem, 14vw, 3.6rem);
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+/* Tick or cross in the corner: pops in, then fades on its own. */
+.game-stage--word-memory .wm-mark-slot { position: absolute; top: 0.7rem; right: 0.9rem; font-size: 1.5rem; }
+.game-stage--word-memory .wm-mark { animation: wm-mark 900ms var(--g-ease) both; }
+.game-stage--word-memory .wm-mark--good { color: var(--g-good); }
+.game-stage--word-memory .wm-mark--bad { color: var(--g-bad); animation-duration: 1300ms; }
+
+@keyframes wm-mark {
+  0% { opacity: 0; transform: scale(0.5) rotate(-12deg); }
+  20% { opacity: 1; transform: scale(1.1) rotate(0); }
+  70% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1); }
+}
+
+/* One line under the card: a hint at the start, or what went wrong. */
+.game-stage--word-memory .wm-feedback {
+  min-height: 1.5em;
+  margin: 0;
+  font-size: 1rem;
+  text-align: center;
+}
+.game-stage--word-memory .wm-feedback[data-tone="hint"] { color: var(--muted); }
+.game-stage--word-memory .wm-feedback[data-tone="bad"] { color: var(--g-bad); font-weight: 650; }
+
+/* The two answers, side by side and equally weighted so neither is the "default". */
+.game-stage--word-memory .wm-answers {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+.game-stage--word-memory .wm-answer {
+  min-height: 64px;
+  border-radius: 14px;
+  font-size: 1.2rem;
+}
+.game-stage--word-memory .wm-key {
+  border: 1px solid var(--project-line);
+  border-radius: 5px;
+  padding: 0.1rem 0.4rem;
+  color: var(--muted);
+  font: 600 0.75rem/1.2 var(--g-mono);
+}
+/* Shortcuts mean nothing without a keyboard. */
+@media (hover: none), (pointer: coarse) {
+  .game-stage--word-memory .wm-key { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-stage--word-memory .wm-mark { animation-name: wm-mark-fade; }
+}
+@keyframes wm-mark-fade { 0%, 70% { opacity: 1; } 100% { opacity: 0; } }
+
+/* Phones: the buttons sit under the thumb, so make them easy to hit. */
+@media (max-width: 640px) {
+  .game-stage--word-memory .wm .g-stats { margin-bottom: 0; } /* the column gap already spaces it */
+  .game-stage--word-memory .wm-card { min-height: 0; }
+  .game-stage--word-memory .wm-answer { min-height: 76px; font-size: 1.25rem; }
+}

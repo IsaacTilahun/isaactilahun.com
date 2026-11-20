@@ -1,0 +1,186 @@
+/* Memory Match. Scoped to the game's stage. */
+
+/* ---------- Layout ---------- */
+
+/* Stats across the top; the board and status line sit centred in the room
+   below (the auto margins split the spare height). The root is a size
+   container so the board can be the largest square that fits. */
+.game-stage--memory .mm {
+  display: flex;
+  min-height: 400px;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  container-type: size;
+}
+.game-stage--memory .mm .g-stats { align-self: stretch; }
+
+/* 6.75rem leaves room for the stats above and the status line below. */
+.game-stage--memory .mm-board {
+  display: grid;
+  width: min(100%, 56vh, 30rem);
+  width: min(100cqw, 100cqh - 6.75rem, 30rem);
+  flex: none;
+  aspect-ratio: 1;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(4, minmax(0, 1fr));
+  gap: clamp(6px, 1.8vw, 12px);
+  margin-top: auto;
+  container-type: inline-size;
+}
+
+.game-stage--memory .mm-status {
+  min-height: 1.5em;
+  margin: 0.9rem 0 auto;
+  color: var(--muted);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* ---------- Card ---------- */
+
+.game-stage--memory .mm-card {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  border: 0;
+  border-radius: var(--g-radius);
+  padding: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+  perspective: 700px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.game-stage--memory .mm-card:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.game-stage--memory .mm-card:not([data-state="down"]) { cursor: default; }
+
+/* The inner layer is what turns over; the two faces sit back to back on it. */
+.game-stage--memory .mm-card__inner {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 380ms var(--g-ease); /* FLIP_MS in memory.js */
+}
+.game-stage--memory .mm-card:not([data-state="down"]) .mm-card__inner { transform: rotateY(180deg); }
+
+@media (hover: hover) {
+  .game-stage--memory .mm-card[data-state="down"]:hover .mm-card__inner { transform: translateY(-3px) rotate(-1deg); }
+}
+.game-stage--memory .mm-card[data-state="down"]:active .mm-card__inner { transform: scale(0.95); transition-duration: 90ms; }
+
+.game-stage--memory .mm-face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: var(--g-radius);
+  background: var(--paper);
+  box-shadow: 0 4px 12px var(--paper-shadow);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Back: inked outline with a light pencil hatch and a "?" stamp. */
+.game-stage--memory .mm-face--back {
+  border: 1.5px solid var(--text);
+  background:
+    repeating-linear-gradient(-45deg, color-mix(in srgb, var(--text) 9%, transparent) 0 1.5px, transparent 1.5px 8px),
+    var(--paper);
+}
+.game-stage--memory .mm-back-art.g-art--text {
+  display: grid;
+  width: 42%;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1.5px dashed var(--project-line);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--muted);
+  font: 700 clamp(0.9rem, 6cqw, 1.6rem)/1 var(--g-mono);
+}
+/* A drawn card back fills the card and replaces the hatch. */
+.game-stage--memory .mm-back-art.g-art--img { width: 100%; height: 100%; object-fit: contain; }
+.game-stage--memory .mm-face--back:has(.g-art--img) { background: var(--paper); }
+
+/* Front: plain paper with the symbol. Colour changes wait until the card is edge-on,
+   so a turning card never shows its colour snap. */
+.game-stage--memory .mm-face--front {
+  border: 1.5px solid color-mix(in srgb, var(--text) 32%, transparent);
+  transform: rotateY(180deg);
+  transition: border-color 200ms ease 220ms, background-color 200ms ease 220ms, color 200ms ease 220ms;
+}
+.game-stage--memory .mm-symbol {
+  position: relative;
+  font: 700 clamp(1rem, 7.4cqw, 2.3rem)/1 var(--g-mono);
+  letter-spacing: -0.04em;
+  white-space: pre;
+}
+/* A drawn card outline (art slot "card") replaces the CSS border. */
+.game-stage--memory .mm-front-art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; pointer-events: none; }
+.game-stage--memory .mm-face--front:has(.mm-front-art) { border-color: transparent; box-shadow: none; }
+
+/* ---------- Pair states ---------- */
+
+/* Wrong pair: a red edge while it's on show. Found pair: a soft green tint. */
+.game-stage--memory .mm-card[data-state="miss"] .mm-face--front { border-color: var(--g-bad); color: var(--g-bad); }
+.game-stage--memory .mm-card[data-state="matched"] .mm-face--front {
+  border-color: var(--g-good);
+  background: color-mix(in srgb, var(--g-good) 11%, var(--paper));
+  color: var(--g-good);
+}
+
+/* ---------- Motion ---------- */
+
+/* Cards are dealt in one by one, and wave when the board is cleared. */
+.game-stage--memory .mm-card { animation: mm-deal 380ms var(--g-ease) both; animation-delay: calc(var(--i) * 22ms); }
+.game-stage--memory .mm--won .mm-card { animation: mm-wave 560ms var(--g-ease) both; animation-delay: calc(var(--i) * 30ms); }
+
+@keyframes mm-deal { from { opacity: 0; transform: translateY(10px) scale(0.9); } }
+@keyframes mm-wave { 40% { transform: translateY(-7px) scale(1.05); } }
+
+/* Reduced motion (set from ctx.reducedMotion): faces swap instantly, nothing moves. */
+.game-stage--memory .mm--still .mm-card,
+.game-stage--memory .mm--still .mm-card__inner,
+.game-stage--memory .mm--still .mm-face { animation: none; transition: none; }
+
+/* ---------- Short, wide screens ---------- */
+
+/* Phones in landscape and squat windows: board on the left, stats and status
+   stacked beside it, so the whole board fits without scrolling. */
+@media (orientation: landscape) and (max-height: 540px) {
+  .game-stage--memory .mm {
+    display: grid;
+    min-height: 220px;
+    grid-template-columns: auto minmax(0, 11rem);
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas: "board stats" "board status";
+    align-content: center;
+    justify-content: center;
+    column-gap: clamp(1rem, 4cqw, 2rem);
+  }
+  .game-stage--memory .mm-board {
+    grid-area: board;
+    align-self: center;
+    width: min(100cqh, 100cqw - 13rem, 30rem);
+    margin: 0;
+  }
+  .game-stage--memory .mm .g-stats {
+    grid-area: stats;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-self: end;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin: 0;
+  }
+  .game-stage--memory .mm .g-stat { align-items: flex-start; }
+  .game-stage--memory .mm-status { grid-area: status; align-self: start; margin: 0.9rem 0 0; text-align: left; }
+}

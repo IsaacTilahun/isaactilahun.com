@@ -1,0 +1,108 @@
+/* Chimp Test. Scoped to the game's stage. */
+
+/* ---------- Layout ---------- */
+
+/* Stats on top. Below them the board and its status line sit together,
+   centred in whatever room is left. */
+.game-stage--chimp .ch { display: flex; min-height: 0; flex: 1; flex-direction: column; }
+
+.game-stage--chimp .ch-area {
+  --status-room: 3.3rem;  /* two lines of status plus the gap, kept free under the board */
+  display: flex;
+  min-height: 240px;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  container-type: size;
+}
+
+/* The board keeps the grid's shape (--cols x --rows, set by chimp.js) and
+   grows until it touches an edge of the area, capped so cells stay tile-sized. */
+.game-stage--chimp .ch-board {
+  display: grid;
+  width: min(100%, var(--cols) * 5.25rem);
+  width: min(100cqw, (100cqh - var(--status-room)) * var(--cols) / var(--rows), var(--cols) * 5.25rem);
+  aspect-ratio: var(--cols) / var(--rows);
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--rows), minmax(0, 1fr));
+  gap: clamp(5px, 1.2cqw, 9px);
+  border-radius: var(--g-radius);
+  container-type: inline-size;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.game-stage--chimp .ch-board:focus { outline: none; }
+
+/* Empty cells: a faint dashed outline, like squares on graph paper. */
+.game-stage--chimp .ch-cell { border: 1px dashed var(--paper-line); border-radius: 7px; }
+
+/* A fixed two-line height, so a longer message never nudges the board. */
+.game-stage--chimp .ch-status {
+  height: 2.8em;
+  margin: 0.6rem 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.4;
+  text-align: center;
+  text-wrap: balance;
+}
+
+/* ---------- Tiles ---------- */
+
+/* A small paper card with an inked edge and a little drop underneath. */
+.game-stage--chimp .ch-tile {
+  display: grid;
+  min-width: 0;
+  place-items: center;
+  border: 1.5px solid var(--text);
+  border-radius: 7px;
+  padding: 0;
+  background: var(--paper);
+  box-shadow: 0 2px 0 var(--project-line), 0 4px 10px var(--paper-shadow);
+  color: var(--text);
+  font: 700 1.4rem/1 var(--g-mono);
+  font-size: calc(100cqw / var(--cols) * 0.4);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: scale 160ms var(--g-ease), background-color 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
+  animation: ch-deal 260ms var(--g-ease) backwards;
+}
+.game-stage--chimp .ch-tile:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+@media (hover: hover) {
+  .game-stage--chimp .ch-tile:not(:disabled):hover { translate: 0 -1px; }
+}
+.game-stage--chimp .ch-tile:active { scale: 0.93; transition-duration: 60ms; }
+
+/* Recall: the numbers are gone, only solid ink tiles remain. */
+.game-stage--chimp .ch-tile.is-hidden { background: var(--text); }
+
+/* A correct tap lifts the tile off the board, leaving an empty square behind. */
+.game-stage--chimp .ch-tile.is-cleared {
+  border: 1px dashed var(--paper-line);
+  background: transparent;
+  box-shadow: none;
+  color: transparent;
+  pointer-events: none;
+  animation: ch-clear 220ms var(--g-ease);
+}
+
+/* After a wrong tap: what was left, with the wrong pick in red and the right one in green. */
+.game-stage--chimp .ch-tile.is-revealed { border-style: dashed; color: var(--muted); box-shadow: none; }
+.game-stage--chimp .ch-tile.is-next { border: 2px solid var(--g-good); color: var(--g-good); }
+.game-stage--chimp .ch-tile.is-wrong { border: 2px solid var(--g-bad); background: var(--g-bad); color: var(--paper); }
+
+@keyframes ch-deal { from { opacity: 0; scale: 0.85; } }
+@keyframes ch-clear { from { scale: 0.82; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .game-stage--chimp .ch-tile { animation: none; transition: none; }
+}
+
+/* ---------- Phones ---------- */
+
+@media (max-width: 640px) {
+  .game-stage--chimp .ch-status { font-size: 0.9rem; }
+}
